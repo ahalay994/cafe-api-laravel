@@ -10,10 +10,11 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
 use App\Traits\ResponseTrait;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserController extends Controller
 {
@@ -40,16 +41,16 @@ class UserController extends Controller
 
     /**
      * @param int $id
-     * @return UserResponseData|JsonResponse
+     * @return UserResponseData|Exception|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function show(int $id): JsonResponse|UserResponseData
+    public function show(int $id): NotFoundHttpException|Exception|UserResponseData
     {
         try {
             $user = User::findOrFail($id);
             return new UserResponseData(['user' => $user, 'message' => 'Пользователь #' . $id . ' успешно получен']);
-        } catch (ModelNotFoundException $exception) {
-            return $this->responseError($exception->getMessage());
+        } catch (NotFoundHttpException $exception) {
+            return $exception;
         }
     }
 
@@ -72,10 +73,10 @@ class UserController extends Controller
     /**
      * @param int $id
      * @param UserRequest $request
-     * @return UserResponseData|JsonResponse
+     * @return Exception|NotFoundHttpException|UserResponseData
      * @throws UnknownProperties
      */
-    public function update(UserRequest $request, int $id): JsonResponse|UserResponseData
+    public function update(UserRequest $request, int $id): NotFoundHttpException|Exception|UserResponseData
     {
         try {
             $user = User::findOrFail($id);
@@ -85,23 +86,23 @@ class UserController extends Controller
             $user->save();
 
             return new UserResponseData(['user' => $user, 'message' => 'Пользователь успешно обновлён']);
-        } catch (ModelNotFoundException $exception) {
-            return $this->responseError($exception->getMessage());
+        } catch (NotFoundHttpException $exception) {
+            return $exception;
         }
     }
 
     /**
      * @param int $id
-     * @return JsonResponse
+     * @return Exception|JsonResponse|NotFoundHttpException
      */
-    public function delete(int $id): JsonResponse
+    public function delete(int $id): NotFoundHttpException|JsonResponse|Exception
     {
         try {
             User::findOrFail($id)->delete();
 
             return $this->responseSuccess('Пользователь успешно удалён');
-        } catch (ModelNotFoundException $exception) {
-            return $this->responseError($exception->getMessage());
+        } catch (NotFoundHttpException $exception) {
+            return $exception;
         }
     }
 }
