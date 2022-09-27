@@ -24,7 +24,7 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['filled', 'email:rfc,dns', 'unique:users,email'],
+            'email' => ['filled', 'email:rfc,dns', 'unique:users'],
             'password' => ['filled', 'min:8', 'confirmed'],
             'password_confirmation' => ['filled'],
         ];

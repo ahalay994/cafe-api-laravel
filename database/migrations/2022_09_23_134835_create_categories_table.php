@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug')->unique();
+            $table->string('slug');
             $table->text('description')->nullable();
             $table
                 ->foreignId('parent_id')
@@ -25,6 +25,8 @@ return new class extends Migration
             $table->integer('order')->index()->default(0);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['name', 'slug']);
         });
     }
 
