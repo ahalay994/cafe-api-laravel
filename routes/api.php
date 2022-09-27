@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UsersContact;
 use Illuminate\Support\Facades\Route;
@@ -29,8 +30,20 @@ Route::controller(UserController::class)->prefix('users')->group(function () {
     Route::post('/', 'create');
     Route::put('/{id}', 'update');
     Route::delete('/{id}', 'delete');
+    Route::patch('/{id}', 'restore');
+    Route::post('/role', 'addRole');
+    Route::delete('/role', 'removeRole');
 });
 
 Route::controller(UsersContact::class)->prefix('contacts')->group(function () {
     Route::post('/{userId}', 'updateOrCreate');
+});
+
+Route::controller(RoleController::class)->prefix('roles')->group(function () {
+    Route::get('/', 'store')->withTrashed();
+    Route::get('/{id}', 'show')->withTrashed();
+    Route::post('/', 'create');
+    Route::put('/{id}', 'update');
+    Route::delete('/{id}', 'delete');
+    Route::patch('/{id}', 'restore');
 });

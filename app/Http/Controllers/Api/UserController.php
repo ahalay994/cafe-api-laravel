@@ -8,9 +8,11 @@ use App\DataTransferObjects\User\UsersCollection;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\UserRequest;
+use App\Http\Requests\UsersRoleRequest;
+use App\Models\Role;
 use App\Models\User;
+use App\Models\UsersRole;
 use App\Traits\ResponseTrait;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
@@ -41,10 +43,10 @@ class UserController extends Controller
 
     /**
      * @param int $id
-     * @return UserResponseData|Exception|NotFoundHttpException
+     * @return UserResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function show(int $id): NotFoundHttpException|Exception|UserResponseData
+    public function show(int $id): NotFoundHttpException|UserResponseData
     {
         try {
             $user = User::findOrFail($id);
@@ -73,10 +75,10 @@ class UserController extends Controller
     /**
      * @param int $id
      * @param UserRequest $request
-     * @return Exception|NotFoundHttpException|UserResponseData
+     * @return NotFoundHttpException|UserResponseData
      * @throws UnknownProperties
      */
-    public function update(UserRequest $request, int $id): NotFoundHttpException|Exception|UserResponseData
+    public function update(UserRequest $request, int $id): NotFoundHttpException|UserResponseData
     {
         try {
             $user = User::findOrFail($id);
@@ -93,16 +95,62 @@ class UserController extends Controller
 
     /**
      * @param int $id
-     * @return Exception|JsonResponse|NotFoundHttpException
+     * @return NotFoundHttpException|JsonResponse
      */
-    public function delete(int $id): NotFoundHttpException|JsonResponse|Exception
+    public function delete(int $id): NotFoundHttpException|JsonResponse
     {
         try {
-            User::findOrFail($id)->delete();
+            User::destroy($id);
 
             return $this->responseSuccess('Пользователь успешно удалён');
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
+    }
+
+    /**
+     * @param int $id
+     * @return NotFoundHttpException|JsonResponse
+     */
+    public function restore(int $id): NotFoundHttpException|JsonResponse
+    {
+        try {
+            User::withTrashed()->findOrFail($id)->restore();
+
+            return $this->responseSuccess('Пользователь успешно восстановлен');
+        } catch (NotFoundHttpException $exception) {
+            return $exception;
+        }
+    }
+
+    /**
+     * @param UsersRoleRequest $request
+     * @return JsonResponse
+     */
+    public function addRole(UsersRoleRequest $request): JsonResponse
+    {
+        $user = User::find((int)$request->user_id);
+        $role = Role::find((int)$request->role_id);
+
+        $usersRole = UsersRole::where(['user_id' => $request->user_id, 'role_id' => $request->role_id])->first();
+        if (is_null($usersRole)) {
+            UsersRole::create($request->all());
+            return $this->responseSuccess('Пользователю "' . $user->email . '" присвоена роль "' . $role->name . '"');
+        } else {
+            return $this->responseError('Пользователю "' . $user->email . '" уже присвоена роль "' . $role->name . '"');
+        }
+    }
+
+    /**
+     * @param UsersRoleRequest $request
+     * @return JsonResponse
+     */
+    public function removeRole(UsersRoleRequest $request): JsonResponse
+    {
+        UsersRole::where(['user_id' => $request->user_id, 'role_id' => $request->role_id])->delete();
+        $user = User::find($request->user_id);
+        $role = Role::find($request->role_id);
+
+        return $this->responseSuccess('У пользователя "' . $user->email . '" удалена роль "' . $role->name . '"');
     }
 }
