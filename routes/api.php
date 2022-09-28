@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AccessController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UsersContact;
@@ -37,11 +38,11 @@ Route::controller(UserController::class)->prefix('users')->middleware(['auth:san
     Route::delete('/role', 'removeRole');
 });
 
-Route::controller(UsersContact::class)->prefix('contacts')->group(function () {
+Route::controller(UsersContact::class)->prefix('contacts')->middleware(['auth:sanctum'])->group(function () {
     Route::post('/{userId}', 'updateOrCreate');
 });
 
-Route::controller(RoleController::class)->prefix('roles')->group(function () {
+Route::controller(RoleController::class)->prefix('roles')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', 'store')->withTrashed();
     Route::get('/{id}', 'show')->withTrashed();
     Route::post('/', 'create');
@@ -52,10 +53,19 @@ Route::controller(RoleController::class)->prefix('roles')->group(function () {
     Route::delete('/access', 'removeAccess');
 });
 
-Route::controller(AccessController::class)->prefix('access')->group(function () {
+Route::controller(AccessController::class)->prefix('accesses')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', 'store');
     Route::get('/{id}', 'show');
     Route::post('/', 'create');
     Route::put('/{id}', 'update');
     Route::delete('/{id}', 'delete');
+});
+
+Route::controller(CategoryController::class)->prefix('categories')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('/', 'store')->withTrashed();
+    Route::get('/{id}', 'show')->withTrashed();
+    Route::post('/', 'create');
+    Route::put('/{id}', 'update');
+    Route::delete('/{id}', 'delete');
+    Route::patch('/{id}', 'restore');
 });

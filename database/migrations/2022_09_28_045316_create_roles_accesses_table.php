@@ -17,10 +17,12 @@ return new class extends Migration
             $table
                 ->foreignId('role_id')
                 ->constrained('roles')
+                ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table
                 ->foreignId('access_id')
                 ->constrained('accesses')
+                ->onUpdate('cascade')
                 ->onDelete('cascade');
         });
     }

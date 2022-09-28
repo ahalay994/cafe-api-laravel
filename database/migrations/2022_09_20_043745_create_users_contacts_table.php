@@ -17,16 +17,16 @@ return new class extends Migration
             $table->id();
             $table
                 ->foreignId('user_id')
+                ->unique()
                 ->constrained('users')
+                ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->string('phone')->nullable()->comment('Номер телефона');
+            $table->string('phone')->nullable()->comment('Номер телефона')->unique();
             $table->string('first_name')->nullable()->comment('Имя');
             $table->string('last_name')->nullable()->comment('Фамилия');
             $table->string('patronymic_name')->nullable()->comment('Отчество');
             $table->date('date_birthday')->nullable()->comment('Дата рождения');
             $table->timestamps();
-
-            $table->unique(['user_id', 'phone']);
         });
     }
 

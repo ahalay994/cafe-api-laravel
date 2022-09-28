@@ -23,7 +23,7 @@ class UserController extends Controller
     use ResponseTrait;
 
     const USER_RELATIONS = [
-        'roles',
+        'roles.accesses',
         'contacts',
     ];
 
@@ -33,7 +33,7 @@ class UserController extends Controller
      */
     public function store(): ResponsePaginationData
     {
-        $users = User::paginate();
+        $users = User::with(self::USER_RELATIONS)->paginate();
 
         return new ResponsePaginationData([
             'paginator' => $users,
@@ -49,7 +49,7 @@ class UserController extends Controller
     public function show(int $id): NotFoundHttpException|UserResponseData
     {
         try {
-            $user = User::findOrFail($id);
+            $user = User::with(self::USER_RELATIONS)->findOrFail($id);
             return new UserResponseData(['user' => $user, 'message' => 'Пользователь #' . $id . ' успешно получен']);
         } catch (NotFoundHttpException $exception) {
             return $exception;
@@ -68,7 +68,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $user = User::find($user->id);
+        $user = User::with(self::USER_RELATIONS)->find($user->id);
         return new UserResponseData(['user' => $user, 'message' => 'Пользователь успешно создан']);
     }
 
@@ -81,7 +81,7 @@ class UserController extends Controller
     public function update(UserRequest $request, int $id): NotFoundHttpException|UserResponseData
     {
         try {
-            $user = User::findOrFail($id);
+            $user = User::with(self::USER_RELATIONS)->findOrFail($id);
             $user->email = $request->email ?? $user->email;
             $user->blocked = $request->blocked ?? $user->blocked;
             $user->password = isset($request->password) ? Hash::make($request->password) : $user->password;

@@ -85,9 +85,9 @@ class RoleController extends Controller
 
     /**
      * @param int $id
-     * @return Exception|JsonResponse|NotFoundHttpException
+     * @return JsonResponse|NotFoundHttpException
      */
-    public function delete(int $id): NotFoundHttpException|JsonResponse|Exception
+    public function delete(int $id): NotFoundHttpException|JsonResponse
     {
         try {
             Role::findOrFail($id)->delete();

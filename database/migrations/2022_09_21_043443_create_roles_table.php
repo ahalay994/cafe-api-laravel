@@ -15,11 +15,10 @@ return new class extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug')->index();
+            $table->string('name')->unique();
+            $table->string('slug')->index()->unique();
             $table->timestamps();
-
-            $table->unique(['name', 'slug']);
+            $table->softDeletes();
         });
     }
 
