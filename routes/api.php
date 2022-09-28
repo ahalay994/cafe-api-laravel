@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UsersContact;
+use App\Models\Role;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,7 +26,7 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::get('/info', 'userInfo')->middleware('auth:sanctum');
 });
 
-Route::controller(UserController::class)->prefix('users')->group(function () {
+Route::controller(UserController::class)->prefix('users')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', 'store')->withTrashed();
     Route::get('/{id}', 'show')->withTrashed();
     Route::post('/', 'create');
@@ -47,6 +48,8 @@ Route::controller(RoleController::class)->prefix('roles')->group(function () {
     Route::put('/{id}', 'update');
     Route::delete('/{id}', 'delete');
     Route::patch('/{id}', 'restore');
+    Route::post('/access', 'addAccess');
+    Route::delete('/access', 'removeAccess');
 });
 
 Route::controller(AccessController::class)->prefix('access')->group(function () {

@@ -129,8 +129,8 @@ class UserController extends Controller
      */
     public function addRole(UsersRoleRequest $request): JsonResponse
     {
-        $user = User::find((int)$request->user_id);
-        $role = Role::find((int)$request->role_id);
+        $user = User::find($request->user_id);
+        $role = Role::find($request->role_id);
 
         $usersRole = UsersRole::where(['user_id' => $request->user_id, 'role_id' => $request->role_id])->first();
         if (is_null($usersRole)) {

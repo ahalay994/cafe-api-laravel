@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Traits\ResponseTrait;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,8 +44,8 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request): AuthResponseData|JsonResponse
     {
-        if (auth()->attempt($request->all())) {
-            $user = auth()->user();
+        if (Auth::attempt($request->all())) {
+            $user = Auth::user();
 
             return new AuthResponseData(['user' => $user]);
         } else {

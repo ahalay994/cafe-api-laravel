@@ -5,13 +5,13 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * App\Http\Requests\AccessRequest
+ * App\Http\Requests\RolesAccessRequest
  *
- * @property string $name
- * @property string $comment
+ * @property int $role_id
+ * @property int $access_id
  */
 
-class AccessRequest extends FormRequest
+class RolesAccessRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,8 +31,8 @@ class AccessRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'min:1'],
-            'comment' => ['string', 'nullable'],
+            'role_id' => ['required', 'exists:roles,id'],
+            'access_id' => ['required', 'exists:accesses,id'],
         ];
     }
 }

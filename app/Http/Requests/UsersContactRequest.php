@@ -2,7 +2,18 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+
+/**
+ * App\Http\Requests\UsersContactRequest
+ *
+ * @property string|null $phone
+ * @property string|null $first_name
+ * @property string|null $last_name
+ * @property string|null $patronymic_name
+ * @property Carbon|null $date_birthday
+ */
 
 class UsersContactRequest extends FormRequest
 {

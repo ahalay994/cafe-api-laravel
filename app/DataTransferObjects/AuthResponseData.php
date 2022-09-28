@@ -20,10 +20,17 @@ class AuthResponseData extends DataTransferObject implements Responsable
      */
     public function toResponse($request): JsonResponse
     {
+        $userAccesses = [];
+        foreach ($this->user->roles as $role) {
+            $accessNames = $role->accesses->pluck('name')->toArray();
+            $userAccesses = array_merge($userAccesses, $accessNames);
+        }
+        // собираем все полномочия для текущего пользователя
+        $userAccesses = array_values(array_unique($userAccesses));
         return response()->json(
             [
                 'user' => new UserData($this->user->toArray()),
-                'token' => $this->user->createToken(env('APP_TOKEN'))->plainTextToken,
+                'token' => $this->user->createToken(env('APP_TOKEN'), $userAccesses)->plainTextToken,
             ],
             Response::HTTP_OK
         );

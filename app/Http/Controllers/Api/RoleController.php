@@ -7,7 +7,10 @@ use App\DataTransferObjects\Role\RoleResponseData;
 use App\DataTransferObjects\Role\RolesCollection;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RoleRequest;
+use App\Http\Requests\RolesAccessRequest;
+use App\Models\Access;
 use App\Models\Role;
+use App\Models\RolesAccess;
 use App\Traits\ResponseTrait;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -108,5 +111,36 @@ class RoleController extends Controller
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
+    }
+
+    /**
+     * @param RolesAccessRequest $request
+     * @return JsonResponse
+     */
+    public function addAccess(RolesAccessRequest $request): JsonResponse
+    {
+        $role = Role::find($request->role_id);
+        $access = Access::find($request->access_id);
+
+        $rolesAccess = RolesAccess::where(['role_id' => $request->role_id, 'access_id' => $request->access_id])->first();
+        if (is_null($rolesAccess)) {
+            RolesAccess::create($request->all());
+            return $this->responseSuccess('Роли "' . $role->name . '" присвоено право "' . $access->name . '"');
+        } else {
+            return $this->responseError('Роли "' . $role->name . '" уже присвоено право "' . $access->name . '"');
+        }
+    }
+
+    /**
+     * @param RolesAccessRequest $request
+     * @return JsonResponse
+     */
+    public function removeAccess(RolesAccessRequest $request): JsonResponse
+    {
+        RolesAccess::where(['role_id' => $request->role_id, 'access_id' => $request->access_id])->delete();
+        $role = Role::find($request->role_id);
+        $access = Access::find($request->access_id);
+
+        return $this->responseSuccess('У роли "' . $role->name . '" удалено право "' . $access->name . '"');
     }
 }

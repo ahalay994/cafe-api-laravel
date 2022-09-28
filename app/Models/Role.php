@@ -19,6 +19,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  * @property User[]|null $users
+ * @property Access[]|null $accesses
  * @method static Builder|Role newModelQuery()
  * @method static Builder|Role newQuery()
  * @method static \Illuminate\Database\Query\Builder|Role onlyTrashed()
@@ -47,10 +48,32 @@ class Role extends Model
     ];
 
     /**
+     * @param array $roles
+     * @return string
+     */
+    public static function getAccess(array $roles): string
+    {
+        $accesses = [];
+        foreach ($roles as $role) {
+            $role = Role::whereSlug($role)->first();
+            $accesses = array_merge($accesses, $role->accesses->pluck('name')->toArray());
+        }
+        return implode(',', array_values(array_unique($accesses)));
+    }
+
+    /**
      * @return BelongsToMany
      */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, UsersRole::getTable());
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function accesses(): BelongsToMany
+    {
+        return $this->belongsToMany(Access::class, RolesAccess::class);
     }
 }
