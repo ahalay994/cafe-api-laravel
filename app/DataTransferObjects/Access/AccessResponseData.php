@@ -1,20 +1,20 @@
 <?php
 
-namespace App\DataTransferObjects\Role;
+namespace App\DataTransferObjects\Access;
 
-use App\Models\Role;
+use App\Models\Access;
 use App\Traits\ResponseTrait;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\JsonResponse;
 use Spatie\DataTransferObject\DataTransferObject;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
-class RoleResponseData extends DataTransferObject implements Responsable
+class AccessResponseData extends DataTransferObject implements Responsable
 {
     use ResponseTrait;
 
-    /** @var Role */
-    public Role $role;
+    /** @var Access */
+    public Access $access;
 
     /** @var string */
     public string $message;
@@ -26,7 +26,7 @@ class RoleResponseData extends DataTransferObject implements Responsable
      */
     public function toResponse($request): JsonResponse
     {
-        $role = new RoleData($this->role->toArray());
-        return $this->responseSuccess($this->message, $role);
+        $access = new AccessData($this->access->toArray());
+        return $this->responseSuccess($this->message, $access);
     }
 }

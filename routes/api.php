@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AccessController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
@@ -46,4 +47,12 @@ Route::controller(RoleController::class)->prefix('roles')->group(function () {
     Route::put('/{id}', 'update');
     Route::delete('/{id}', 'delete');
     Route::patch('/{id}', 'restore');
+});
+
+Route::controller(AccessController::class)->prefix('access')->group(function () {
+    Route::get('/', 'store');
+    Route::get('/{id}', 'show');
+    Route::post('/', 'create');
+    Route::put('/{id}', 'update');
+    Route::delete('/{id}', 'delete');
 });

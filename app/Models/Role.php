@@ -18,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ * @property User[]|null $users
  * @method static Builder|Role newModelQuery()
  * @method static Builder|Role newQuery()
  * @method static \Illuminate\Database\Query\Builder|Role onlyTrashed()
