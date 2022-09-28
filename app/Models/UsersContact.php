@@ -52,6 +52,10 @@ class UsersContact extends Model
         'updated_at',
     ];
 
+    protected $casts = [
+        'date_birthday' => 'date:d.m.Y'
+    ];
+
     /**
      * @return string
      */

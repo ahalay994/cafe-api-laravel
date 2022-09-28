@@ -2,6 +2,7 @@
 
 namespace App\DataTransferObjects\Category;
 
+use App\DataTransferObjects\Product\ProductData;
 use Spatie\DataTransferObject\Attributes\CastWith;
 use Spatie\DataTransferObject\Casters\ArrayCaster;
 use Spatie\DataTransferObject\DataTransferObject;
@@ -29,4 +30,8 @@ class CategoryData extends DataTransferObject
     /** @var CategoryData[] */
     #[CastWith(ArrayCaster::class, CategoryData::class)]
     public ?array $children;
+
+    /** @var ProductData[] */
+    #[CastWith(ArrayCaster::class, ProductData::class)]
+    public ?array $products;
 }

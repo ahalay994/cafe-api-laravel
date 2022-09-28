@@ -24,7 +24,7 @@ class CategoryController extends Controller
      */
     public function store(): ResponsePaginationData
     {
-        $categories = Category::with(['children'])->where(['parent_id' => null])->paginate();
+        $categories = Category::with(['children.products', 'products'])->where(['parent_id' => null])->paginate();
 
         return new ResponsePaginationData([
             'paginator' => $categories,
@@ -40,7 +40,7 @@ class CategoryController extends Controller
     public function show(int $id): NotFoundHttpException|CategoryResponseData
     {
         try {
-            $category = Category::with(['children', 'parent'])->findOrFail($id);
+            $category = Category::with(['children', 'parent', 'products'])->findOrFail($id);
             return new CategoryResponseData(['category' => $category, 'message' => 'Категория #' . $id . ' успешно получена']);
         } catch (NotFoundHttpException $exception) {
             return $exception;

@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,6 +26,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $deleted_at
  * @property-read Category|null $parent
  * @property-read Category[]|null $children
+ * @property-read Product[]|null $products
  * @method static Builder|Category whereId($value)
  * @method static Builder|Category whereName($value)
  * @method static Builder|Category whereSlug($value)
@@ -71,5 +74,9 @@ class Category extends Model
     public function children(): HasMany
     {
         return $this->hasMany($this, 'parent_id', 'id');
+    }
+
+    public function products(): HasMany {
+        return $this->hasMany(Product::class, 'category_id', 'id');
     }
 }

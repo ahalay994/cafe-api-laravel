@@ -12,7 +12,6 @@ use App\Models\Access;
 use App\Models\Role;
 use App\Models\RolesAccess;
 use App\Traits\ResponseTrait;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
