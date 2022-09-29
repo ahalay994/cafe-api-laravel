@@ -2,7 +2,13 @@
 
 namespace App\DataTransferObjects\Product;
 
+use App\DataTransferObjects\Addition\AdditionData;
 use App\DataTransferObjects\Category\CategoryData;
+use App\DataTransferObjects\Position\PositionData;
+use App\DataTransferObjects\Position\test\PositionResponseData;
+use Spatie\DataTransferObject\Attributes\CastWith;
+use Spatie\DataTransferObject\Attributes\MapFrom;
+use Spatie\DataTransferObject\Casters\ArrayCaster;
 use Spatie\DataTransferObject\DataTransferObject;
 
 class ProductData extends DataTransferObject
@@ -17,19 +23,11 @@ class ProductData extends DataTransferObject
     public string $slug;
 
     /** @var string */
-    public string $short_description;
+    #[MapFrom('short_description')]
+    public string $shortDescription;
 
     /** @var string */
     public string $description;
-
-    /** @var float */
-    public float $price;
-
-    /** @var float|null */
-    public ?float $old_price;
-
-    /** @var int */
-    public int $discount;
 
     /** @var bool */
     public bool $hidden;
@@ -39,4 +37,12 @@ class ProductData extends DataTransferObject
 
     /** @var CategoryData|null */
     public ?CategoryData $category;
+
+    /** @var AdditionData[] */
+    #[CastWith(ArrayCaster::class, AdditionData::class)]
+    public ?array $additions;
+
+    /** @var PositionData[] */
+    #[CastWith(ArrayCaster::class, PositionResponseData::class)]
+    public ?array $positions;
 }

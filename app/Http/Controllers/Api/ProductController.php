@@ -24,7 +24,7 @@ class ProductController extends Controller
      */
     public function store(): ResponsePaginationData
     {
-        $products = Product::with(['category'])->paginate();
+        $products = Product::with(['category', 'additions', 'positions'])->paginate();
 
         return new ResponsePaginationData([
             'paginator' => $products,
@@ -40,7 +40,7 @@ class ProductController extends Controller
     public function show(int $id): NotFoundHttpException|ProductResponseData
     {
         try {
-            $product = Product::with(['category'])->findOrFail($id);
+            $product = Product::with(['positions'])->findOrFail($id);
             return new ProductResponseData(['product' => $product, 'message' => 'Продукция #' . $id . ' успешно получена']);
         } catch (NotFoundHttpException $exception) {
             return $exception;
