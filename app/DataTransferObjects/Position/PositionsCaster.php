@@ -15,7 +15,6 @@ class PositionsCaster implements Caster
      */
     public function cast(mixed $value): array
     {
-        dd($value);
         return array_map(
             fn (Position $position) => new PositionData(...$position->toArray()),
             $value

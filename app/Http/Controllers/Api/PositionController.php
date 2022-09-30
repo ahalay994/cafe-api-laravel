@@ -7,11 +7,14 @@ use App\DataTransferObjects\Position\PositionsCollection;
 use App\DataTransferObjects\ResponsePaginationData;
 use App\Http\Controllers\Controller;
 use App\Models\Position;
+use App\Traits\ResponseTrait;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PositionController extends Controller
 {
+    use ResponseTrait;
+
     /**
      * @return ResponsePaginationData
      * @throws UnknownProperties

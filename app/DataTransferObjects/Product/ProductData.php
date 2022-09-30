@@ -4,10 +4,11 @@ namespace App\DataTransferObjects\Product;
 
 use App\DataTransferObjects\Addition\AdditionData;
 use App\DataTransferObjects\Category\CategoryData;
-use App\DataTransferObjects\Position\PositionData;
-use App\DataTransferObjects\Position\test\PositionResponseData;
+use App\DataTransferObjects\Position\Relations\PositionObject;
+use App\DataTransferObjects\Position\Relations\PositionsObjectCaster;
 use Spatie\DataTransferObject\Attributes\CastWith;
 use Spatie\DataTransferObject\Attributes\MapFrom;
+use Spatie\DataTransferObject\Attributes\MapTo;
 use Spatie\DataTransferObject\Casters\ArrayCaster;
 use Spatie\DataTransferObject\DataTransferObject;
 
@@ -33,7 +34,8 @@ class ProductData extends DataTransferObject
     public bool $hidden;
 
     /** @var int */
-    public int $category_id;
+    #[MapFrom('category_id')]
+    public int $categoryId;
 
     /** @var CategoryData|null */
     public ?CategoryData $category;
@@ -42,7 +44,8 @@ class ProductData extends DataTransferObject
     #[CastWith(ArrayCaster::class, AdditionData::class)]
     public ?array $additions;
 
-    /** @var PositionData[] */
-    #[CastWith(ArrayCaster::class, PositionResponseData::class)]
+    /** @var PositionObject[] */
+    #[MapTo('collection')]
+    #[CastWith(PositionsObjectCaster::class)]
     public ?array $positions;
 }

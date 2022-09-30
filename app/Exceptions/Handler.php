@@ -59,7 +59,7 @@ class Handler extends ExceptionHandler
                     $model = (app())->make($previousException->getModel());
                     return $this->responseError(Lang::get('controller.not_found.' . $model->getTable()));
                 }
-                return $this->responseError('Запись не найдена');
+                return $this->responseError('Некорректный запрос');
             }
             return true;
         });
