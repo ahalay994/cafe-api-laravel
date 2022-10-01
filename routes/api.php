@@ -79,20 +79,27 @@ Route::controller(ProductController::class)->prefix('products')->middleware(['au
     Route::post('/', 'create');
     Route::put('/{id}', 'update');
     Route::delete('/{id}', 'delete');
+    Route::post('/addition', 'addAddition');
+    Route::delete('/addition', 'removeAddition');
+    Route::post('/position', 'addPosition');
+    Route::delete('/position', 'removePosition');
+    Route::post('/tag', 'addTag');
+    Route::delete('/tag', 'removeTag');
 });
 
 Route::controller(AdditionController::class)->prefix('additions')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', 'store');
     Route::get('/{id}', 'show');
-//    Route::post('/', 'create');
-//    Route::put('/{id}', 'update');
-//    Route::delete('/{id}', 'delete');
+    Route::post('/', 'create');
+    Route::put('/{id}', 'update');
+    Route::delete('/{id}', 'delete');
 });
 
 Route::controller(PositionController::class)->prefix('positions')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', 'store');
     Route::get('/{id}', 'show');
-//    Route::post('/', 'create');
-//    Route::put('/{id}', 'update');
-//    Route::delete('/{id}', 'delete');
+    Route::post('/', 'create');
+    Route::put('/{id}', 'update');
+    Route::delete('/{id}', 'delete');
+    Route::patch('/{id}', 'restore');
 });
