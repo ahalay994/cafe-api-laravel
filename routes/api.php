@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AccessController;
 use App\Http\Controllers\Api\AdditionController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\PartnerController;
 use App\Http\Controllers\Api\PositionController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RoleController;
@@ -96,6 +97,15 @@ Route::controller(AdditionController::class)->prefix('additions')->middleware(['
 });
 
 Route::controller(PositionController::class)->prefix('positions')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('/', 'store');
+    Route::get('/{id}', 'show');
+    Route::post('/', 'create');
+    Route::put('/{id}', 'update');
+    Route::delete('/{id}', 'delete');
+    Route::patch('/{id}', 'restore');
+});
+
+Route::controller(PartnerController::class)->prefix('partners')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', 'store');
     Route::get('/{id}', 'show');
     Route::post('/', 'create');
