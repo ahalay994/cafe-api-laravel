@@ -22,6 +22,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->enum('type', ['phone', 'email']);
             $table->string('value');
+            $table->string('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

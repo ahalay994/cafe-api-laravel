@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class AddressesController extends Controller
+class AddressController extends Controller
 {
     use ResponseTrait;
 
