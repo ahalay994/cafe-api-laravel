@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\DataTransferObjects\AuthResponseData;
+use App\DataTransferObjects\Auth\AuthResponseData;
 use App\DataTransferObjects\User\UserResponseData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
@@ -49,7 +49,7 @@ class AuthController extends Controller
 
             return new AuthResponseData(['user' => $user]);
         } else {
-            return $this->responseError('Ошибка авторизации', Response::HTTP_UNAUTHORIZED);
+            return $this->responseError(__('controller.auth.error'), Response::HTTP_UNAUTHORIZED);
         }
     }
 
@@ -59,10 +59,7 @@ class AuthController extends Controller
      */
     public function userInfo(): UserResponseData
     {
-        $user = auth()->user();
-
-        return new UserResponseData(['user' => $user, 'message' => 'Данные текущего пользователя']);
-
+        return new UserResponseData(['user' => auth()->user(), 'message' => __('controller.auth.currentUser')]);
     }
 
     /**
@@ -72,6 +69,6 @@ class AuthController extends Controller
     public function verify(EmailVerificationRequest $request): JsonResponse
     {
         $request->fulfill();
-        return $this->responseSuccess('Email успешно подтверждён');
+        return $this->responseSuccess(__('controller.auth.emailVerifySuccess'));
     }
 }

@@ -21,6 +21,7 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->string('image');
+            $table->integer('sort')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

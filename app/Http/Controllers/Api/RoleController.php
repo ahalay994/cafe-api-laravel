@@ -40,11 +40,12 @@ class RoleController extends Controller
      * @return RoleResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function show(int $id): NotFoundHttpException|RoleResponseData
+    public function show(int $id): RoleResponseData|NotFoundHttpException
     {
         try {
             $role = Role::findOrFail($id);
-            return new RoleResponseData(['role' => $role, 'message' => 'Роль #' . $id . ' успешно получена']);
+
+            return new RoleResponseData(['role' => $role, 'message' => __('controller.role.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -59,16 +60,16 @@ class RoleController extends Controller
     {
         $role = Role::create($request->all());
 
-        return new RoleResponseData(['role' => $role, 'message' => 'Роль успешно создана']);
+        return new RoleResponseData(['role' => $role, 'message' => __('controller.role.create')]);
     }
 
     /**
-     * @param Request $request
+     * @param RoleRequest $request
      * @param int $id
      * @return RoleResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function update(Request $request, int $id): NotFoundHttpException|RoleResponseData
+    public function update(RoleRequest $request, int $id): RoleResponseData|NotFoundHttpException
     {
         try {
             $role = Role::findOrFail($id);
@@ -76,7 +77,7 @@ class RoleController extends Controller
             $role->slug = $request->slug ?? $role->slug;
             $role->save();
 
-            return new RoleResponseData(['role' => $role, 'message' => 'Роль успешно обновлена']);
+            return new RoleResponseData(['role' => $role, 'message' => __('controller.role.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -86,12 +87,12 @@ class RoleController extends Controller
      * @param int $id
      * @return JsonResponse|NotFoundHttpException
      */
-    public function delete(int $id): NotFoundHttpException|JsonResponse
+    public function delete(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Role::findOrFail($id)->delete();
+            Role::destroy($id);
 
-            return $this->responseSuccess('Роль успешно удалена');
+            return $this->responseSuccess(__('controller.role.delete', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -99,14 +100,14 @@ class RoleController extends Controller
 
     /**
      * @param int $id
-     * @return NotFoundHttpException|JsonResponse
+     * @return JsonResponse|NotFoundHttpException
      */
-    public function restore(int $id): NotFoundHttpException|JsonResponse
+    public function restore(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Role::withTrashed()->findOrFail($id)->restore();
+            Role::onlyTrashed()->findOrFail($id)->restore();
 
-            return $this->responseSuccess('Роль успешно восстановлена');
+            return $this->responseSuccess(__('controller.role.restore', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -121,12 +122,12 @@ class RoleController extends Controller
         $role = Role::find($request->role_id);
         $access = Access::find($request->access_id);
 
-        $rolesAccess = RolesAccess::where(['role_id' => $request->role_id, 'access_id' => $request->access_id])->first();
+        $rolesAccess = RolesAccess::firstWhere(['role_id' => $request->role_id, 'access_id' => $request->access_id]);
         if (is_null($rolesAccess)) {
             RolesAccess::create($request->all());
-            return $this->responseSuccess('Роли "' . $role->name . '" присвоено право "' . $access->name . '"');
+            return $this->responseSuccess(__('controller.role.addAccessSuccess', ['roleName' => $role->name, 'accessName' => $access->name]));
         } else {
-            return $this->responseError('Роли "' . $role->name . '" уже присвоено право "' . $access->name . '"');
+            return $this->responseError(__('controller.role.addAccessError', ['roleName' => $role->name, 'accessName' => $access->name]));
         }
     }
 
@@ -140,6 +141,6 @@ class RoleController extends Controller
         $role = Role::find($request->role_id);
         $access = Access::find($request->access_id);
 
-        return $this->responseSuccess('У роли "' . $role->name . '" удалено право "' . $access->name . '"');
+        return $this->responseSuccess(__('controller.role.removeAccess', ['roleName' => $role->name, 'accessName' => $access->name]));
     }
 }

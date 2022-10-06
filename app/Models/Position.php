@@ -16,6 +16,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $description
  * @property string $image
  * @property-read Product[] $products
+ * @method static paginate()
+ * @method static findOrFail(int $id)
+ * @method static create(array $all)
+ * @method static find(int $position_id)
  */
 
 class Position extends Model

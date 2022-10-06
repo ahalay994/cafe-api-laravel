@@ -5,21 +5,14 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
+ * App\Http\Requests\AddressesGalleryRequest
+ *
  * @property int $address_id
  * @property string $image
+ * @property int $sort
  */
 class AddressesGalleryRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -30,6 +23,7 @@ class AddressesGalleryRequest extends FormRequest
         return [
             'address_id' => ['required', 'exists:addresses,id'],
             'image' => ['required'],
+            'sort' => ['required'],
         ];
     }
 }

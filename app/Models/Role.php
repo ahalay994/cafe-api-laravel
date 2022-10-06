@@ -15,23 +15,15 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $name
  * @property string $slug
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
  * @property User[]|null $users
  * @property Access[]|null $accesses
- * @method static Builder|Role newModelQuery()
- * @method static Builder|Role newQuery()
- * @method static \Illuminate\Database\Query\Builder|Role onlyTrashed()
- * @method static Builder|Role query()
- * @method static Builder|Role whereCreatedAt($value)
- * @method static Builder|Role whereDeletedAt($value)
  * @method static Builder|Role whereId($value)
  * @method static Builder|Role whereName($value)
  * @method static Builder|Role whereSlug($value)
- * @method static Builder|Role whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|Role withTrashed()
- * @method static \Illuminate\Database\Query\Builder|Role withoutTrashed()
+ * @method static paginate()
+ * @method static create(array $all)
+ * @method static find(int $role_id)
+ * @method static findOrFail(int $id)
  */
 class Role extends Model
 {

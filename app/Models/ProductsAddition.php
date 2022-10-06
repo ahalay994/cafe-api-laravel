@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $product_id
  * @property int $addition_id
+ * @method static where(array $array)
+ * @method static create(array $all)
+ * @method static firstWhere(array $array)
  */
 
 class ProductsAddition extends Model

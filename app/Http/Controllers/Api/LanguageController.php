@@ -40,7 +40,8 @@ class LanguageController extends Controller
     {
         try {
             $language = Language::findOrFail($id);
-            return new LanguageResponseData(['language' => $language, 'message' => 'Язык #' . $id . ' успешно получен']);
+
+            return new LanguageResponseData(['language' => $language, 'message' => __('controller.language.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -55,7 +56,7 @@ class LanguageController extends Controller
     {
         $language = Language::create($request->all());
 
-        return new LanguageResponseData(['language' => $language, 'message' => 'Язык успешно создан']);
+        return new LanguageResponseData(['language' => $language, 'message' => __('controller.language.create')]);
     }
 
     /**
@@ -64,7 +65,7 @@ class LanguageController extends Controller
      * @return LanguageResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function update(LanguageRequest $request, int $id): NotFoundHttpException|LanguageResponseData
+    public function update(LanguageRequest $request, int $id): LanguageResponseData|NotFoundHttpException
     {
         try {
             $language = Language::findOrFail($id);
@@ -73,7 +74,7 @@ class LanguageController extends Controller
             $language->blocked = $request->blocked ?? $language->blocked;
             $language->save();
 
-            return new LanguageResponseData(['language' => $language, 'message' => 'Язык успешно обновлён']);
+            return new LanguageResponseData(['language' => $language, 'message' => __('controller.language.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -83,12 +84,27 @@ class LanguageController extends Controller
      * @param int $id
      * @return JsonResponse|NotFoundHttpException
      */
-    public function delete(int $id): NotFoundHttpException|JsonResponse
+    public function delete(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Language::findOrFail($id)->delete();
+            Language::destroy($id);
 
-            return $this->responseSuccess('Язык успешно удалён');
+            return $this->responseSuccess(__('controller.language.delete', ['id' => $id]));
+        } catch (NotFoundHttpException $exception) {
+            return $exception;
+        }
+    }
+
+    /**
+     * @param int $id
+     * @return JsonResponse|NotFoundHttpException
+     */
+    public function restore(int $id): JsonResponse|NotFoundHttpException
+    {
+        try {
+            Language::onlyTrashed()->findOrFail($id)->restore();
+
+            return $this->responseSuccess(__('controller.language.restore', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }

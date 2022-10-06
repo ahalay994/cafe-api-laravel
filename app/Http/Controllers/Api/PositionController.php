@@ -10,7 +10,6 @@ use App\Http\Requests\PositionRequest;
 use App\Models\Position;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -37,11 +36,12 @@ class PositionController extends Controller
      * @return PositionResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function show(int $id): NotFoundHttpException|PositionResponseData
+    public function show(int $id): PositionResponseData|NotFoundHttpException
     {
         try {
             $position = Position::findOrFail($id);
-            return new PositionResponseData(['position' => $position, 'message' => 'Позиция #' . $id . ' успешно получена']);
+
+            return new PositionResponseData(['position' => $position, 'message' => __('controller.position.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -56,16 +56,16 @@ class PositionController extends Controller
     {
         $position = Position::create($request->all());
 
-        return new PositionResponseData(['position' => $position, 'message' => 'Позиция успешно создана']);
+        return new PositionResponseData(['position' => $position, 'message' => __('controller.position.create')]);
     }
 
     /**
-     * @param Request $request
+     * @param PositionRequest $request
      * @param int $id
      * @return PositionResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function update(Request $request, int $id): NotFoundHttpException|PositionResponseData
+    public function update(PositionRequest $request, int $id): PositionResponseData|NotFoundHttpException
     {
         try {
             $position = Position::findOrFail($id);
@@ -75,7 +75,7 @@ class PositionController extends Controller
             $position->image = $request->image ?? $position->image;
             $position->save();
 
-            return new PositionResponseData(['position' => $position, 'message' => 'Позиция успешно обновлена']);
+            return new PositionResponseData(['position' => $position, 'message' => __('controller.position.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -85,12 +85,12 @@ class PositionController extends Controller
      * @param int $id
      * @return JsonResponse|NotFoundHttpException
      */
-    public function delete(int $id): NotFoundHttpException|JsonResponse
+    public function delete(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Position::findOrFail($id)->delete();
+            Position::destroy($id);
 
-            return $this->responseSuccess('Позиция успешно удалена');
+            return $this->responseSuccess(__('controller.position.delete', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -98,14 +98,14 @@ class PositionController extends Controller
 
     /**
      * @param int $id
-     * @return NotFoundHttpException|JsonResponse
+     * @return JsonResponse|NotFoundHttpException
      */
-    public function restore(int $id): NotFoundHttpException|JsonResponse
+    public function restore(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Position::withTrashed()->findOrFail($id)->restore();
+            Position::onlyTrashed()->findOrFail($id)->restore();
 
-            return $this->responseSuccess('Позиций успешно восстановлена');
+            return $this->responseSuccess(__('controller.position.restore', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }

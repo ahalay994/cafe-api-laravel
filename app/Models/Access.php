@@ -17,6 +17,10 @@ use Illuminate\Database\Eloquent\Builder;
  * @method static Builder|Access whereId($value)
  * @method static Builder|Access whereName($value)
  * @method static Builder|Access whereComment($value)
+ * @method static paginate()
+ * @method static findOrFail(int $id)
+ * @method static create(array $all)
+ * @method static find(int $access_id)
  */
 
 class Access extends Model

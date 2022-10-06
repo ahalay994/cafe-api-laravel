@@ -23,6 +23,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read Category $category
  * @property-read Addition[] $additions
  * @property-read Position[] $positions
+ * @method static paginate()
+ * @method static findOrFail(int $id)
+ * @method static create(array $all)
+ * @method static find(int $product_id)
  */
 
 class Product extends Model
@@ -44,6 +48,12 @@ class Product extends Model
         'created_at',
         'updated_at',
         'deleted_at',
+    ];
+
+    protected $with = [
+        'category',
+        'additions',
+        'positions',
     ];
 
     /**

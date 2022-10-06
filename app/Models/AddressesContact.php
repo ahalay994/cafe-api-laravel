@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\AddressesContactTypesEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -27,11 +28,16 @@ class AddressesContact extends Model
         'address_id',
         'type',
         'value',
+        'description',
     ];
 
     protected $dates = [
         'created_at',
         'updated_at',
         'deleted_at',
+    ];
+
+    protected $casts = [
+        'type' => AddressesContactTypesEnum::class,
     ];
 }

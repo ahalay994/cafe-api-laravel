@@ -16,6 +16,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static Builder|UsersRole query()
  * @method static Builder|UsersRole whereRoleId($value)
  * @method static Builder|UsersRole whereUserId($value)
+ * @method static create(array $all)
+ * @method static where(array $array)
+ * @method static firstWhere(array $array)
  */
 class UsersRole extends Model
 {

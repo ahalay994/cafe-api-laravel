@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DataTransferObjects;
+namespace App\DataTransferObjects\Auth;
 
 use App\DataTransferObjects\User\UserData;
 use App\Models\User;

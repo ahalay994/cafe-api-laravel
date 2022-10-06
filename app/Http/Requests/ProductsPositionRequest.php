@@ -5,6 +5,8 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
+ * App\Http\Requests\ProductsPositionRequest
+ *
  * @property int $id
  * @property int $product_id
  * @property int $position_id
@@ -15,16 +17,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ProductsPositionRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *

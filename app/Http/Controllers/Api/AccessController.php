@@ -10,7 +10,6 @@ use App\Http\Requests\AccessRequest;
 use App\Models\Access;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -37,11 +36,12 @@ class AccessController extends Controller
      * @return AccessResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function show(int $id): NotFoundHttpException|AccessResponseData
+    public function show(int $id): AccessResponseData|NotFoundHttpException
     {
         try {
             $access = Access::findOrFail($id);
-            return new AccessResponseData(['access' => $access, 'message' => 'Доступ #' . $id . ' успешно получен']);
+
+            return new AccessResponseData(['access' => $access, 'message' => __('controller.access.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -56,16 +56,16 @@ class AccessController extends Controller
     {
         $access = Access::create($request->all());
 
-        return new AccessResponseData(['access' => $access, 'message' => 'Доступ успешно создан']);
+        return new AccessResponseData(['access' => $access, 'message' => __('controller.access.create')]);
     }
 
     /**
-     * @param Request $request
+     * @param AccessRequest $request
      * @param int $id
      * @return AccessResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function update(Request $request, int $id): NotFoundHttpException|AccessResponseData
+    public function update(AccessRequest $request, int $id): AccessResponseData|NotFoundHttpException
     {
         try {
             $access = Access::findOrFail($id);
@@ -73,7 +73,7 @@ class AccessController extends Controller
             $access->comment = $request->slug ?? $access->slug;
             $access->save();
 
-            return new AccessResponseData(['access' => $access, 'message' => 'Доступ успешно обновлён']);
+            return new AccessResponseData(['access' => $access, 'message' => __('controller.access.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -83,12 +83,12 @@ class AccessController extends Controller
      * @param int $id
      * @return JsonResponse|NotFoundHttpException
      */
-    public function delete(int $id): NotFoundHttpException|JsonResponse
+    public function delete(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Access::findOrFail($id)->delete();
+            Access::destroy($id);
 
-            return $this->responseSuccess('Доступ успешно удалён');
+            return $this->responseSuccess(__('controller.access.delete'));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }

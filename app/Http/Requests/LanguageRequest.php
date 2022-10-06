@@ -5,6 +5,8 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
+ * App\Http\Requests\LanguageRequest
+ *
  * @property int $id
  * @property string $key
  * @property string $name
@@ -14,16 +16,6 @@ use Illuminate\Foundation\Http\FormRequest;
 class LanguageRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, mixed>
@@ -31,9 +23,9 @@ class LanguageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'key' => ['required'],
-            'name' => ['required'],
-            'blocked' => [],
+            'key' => ['required', 'unique:languages'],
+            'name' => ['required', 'unique:languages'],
+            'blocked' => ['nullable'],
         ];
     }
 }

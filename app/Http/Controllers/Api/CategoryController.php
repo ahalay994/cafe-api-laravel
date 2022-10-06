@@ -10,7 +10,6 @@ use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -24,7 +23,7 @@ class CategoryController extends Controller
      */
     public function store(): ResponsePaginationData
     {
-        $categories = Category::with(['children.products', 'products'])->where(['parent_id' => null])->paginate();
+        $categories = Category::where(['parent_id' => null])->paginate();
 
         return new ResponsePaginationData([
             'paginator' => $categories,
@@ -37,11 +36,12 @@ class CategoryController extends Controller
      * @return CategoryResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function show(int $id): NotFoundHttpException|CategoryResponseData
+    public function show(int $id): CategoryResponseData|NotFoundHttpException
     {
         try {
-            $category = Category::with(['children', 'parent', 'products'])->findOrFail($id);
-            return new CategoryResponseData(['category' => $category, 'message' => 'Категория #' . $id . ' успешно получена']);
+            $category = Category::findOrFail($id);
+
+            return new CategoryResponseData(['category' => $category, 'message' => __('controller.category.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -57,16 +57,16 @@ class CategoryController extends Controller
         $category = Category::create($request->all());
         $category = Category::find($category->id);
 
-        return new CategoryResponseData(['category' => $category, 'message' => 'Категория успешно создана']);
+        return new CategoryResponseData(['category' => $category, 'message' => __('controller.category.create')]);
     }
 
     /**
-     * @param Request $request
+     * @param CategoryRequest $request
      * @param int $id
      * @return CategoryResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function update(Request $request, int $id): NotFoundHttpException|CategoryResponseData
+    public function update(CategoryRequest $request, int $id): CategoryResponseData|NotFoundHttpException
     {
         try {
             $category = Category::findOrFail($id);
@@ -77,7 +77,7 @@ class CategoryController extends Controller
             $category->order = $request->order ?? $category->order;
             $category->save();
 
-            return new CategoryResponseData(['category' => $category, 'message' => 'Категория успешно обновлена']);
+            return new CategoryResponseData(['category' => $category, 'message' => __('controller.category.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -87,12 +87,12 @@ class CategoryController extends Controller
      * @param int $id
      * @return JsonResponse|NotFoundHttpException
      */
-    public function delete(int $id): NotFoundHttpException|JsonResponse
+    public function delete(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Category::findOrFail($id)->delete();
+            Category::destroy($id);
 
-            return $this->responseSuccess('Категория успешно удалена');
+            return $this->responseSuccess(__('controller.category.delete', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -100,14 +100,14 @@ class CategoryController extends Controller
 
     /**
      * @param int $id
-     * @return NotFoundHttpException|JsonResponse
+     * @return JsonResponse|NotFoundHttpException
      */
-    public function restore(int $id): NotFoundHttpException|JsonResponse
+    public function restore(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Category::withTrashed()->findOrFail($id)->restore();
+            Category::onlyTrashed()->findOrFail($id)->restore();
 
-            return $this->responseSuccess('Категория успешно восстановлена');
+            return $this->responseSuccess(__('controller.category.restore', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }

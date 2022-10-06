@@ -10,7 +10,6 @@ use App\Http\Requests\AddressRequest;
 use App\Models\Address;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -37,11 +36,12 @@ class AddressController extends Controller
      * @return AddressResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function show(int $id): NotFoundHttpException|AddressResponseData
+    public function show(int $id): AddressResponseData|NotFoundHttpException
     {
         try {
             $address = Address::findOrFail($id);
-            return new AddressResponseData(['address' => $address, 'message' => 'Адрес #' . $id . ' успешно получен']);
+
+            return new AddressResponseData(['address' => $address, 'message' => __('controller.address.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -55,9 +55,8 @@ class AddressController extends Controller
     public function create(AddressRequest $request): AddressResponseData
     {
         $address = Address::create($request->all());
-        $address = Address::find($address->id);
 
-        return new AddressResponseData(['address' => $address, 'message' => 'Адрес успешно создан']);
+        return new AddressResponseData(['address' => $address, 'message' => __('controller.address.create')]);
     }
 
     /**
@@ -66,7 +65,7 @@ class AddressController extends Controller
      * @return AddressResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function update(AddressRequest $request, int $id): NotFoundHttpException|AddressResponseData
+    public function update(AddressRequest $request, int $id): AddressResponseData|NotFoundHttpException
     {
         try {
             $address = Address::findOrFail($id);
@@ -76,7 +75,7 @@ class AddressController extends Controller
             $address->lon = $request->lon ?? $address->lon;
             $address->save();
 
-            return new AddressResponseData(['address' => $address, 'message' => 'Адрес успешно обновлён']);
+            return new AddressResponseData(['address' => $address, 'message' => __('controller.address.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -86,12 +85,12 @@ class AddressController extends Controller
      * @param int $id
      * @return JsonResponse|NotFoundHttpException
      */
-    public function delete(int $id): NotFoundHttpException|JsonResponse
+    public function delete(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Address::findOrFail($id)->delete();
+            Address::destroy($id);
 
-            return $this->responseSuccess('Адрес успешно удалён');
+            return $this->responseSuccess(__('controller.address.delete', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -99,14 +98,14 @@ class AddressController extends Controller
 
     /**
      * @param int $id
-     * @return NotFoundHttpException|JsonResponse
+     * @return JsonResponse|NotFoundHttpException
      */
-    public function restore(int $id): NotFoundHttpException|JsonResponse
+    public function restore(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Address::withTrashed()->findOrFail($id)->restore();
+            Address::onlyTrashed()->findOrFail($id)->restore();
 
-            return $this->responseSuccess('Адрес успешно восстановлен');
+            return $this->responseSuccess(__('controller.address.restore', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }

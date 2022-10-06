@@ -12,10 +12,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $address_id
  * @property string $image
+ * @property int $sort
  * @method static paginate()
  * @method static findOrFail(int $id)
  * @method static create(array $all)
  * @method static find($id)
+ * @method static orderBy()
  */
 
 class AddressesGallery extends Model
@@ -25,6 +27,7 @@ class AddressesGallery extends Model
     protected $fillable = [
         'address_id',
         'image',
+        'sort',
     ];
 
     protected $dates = [

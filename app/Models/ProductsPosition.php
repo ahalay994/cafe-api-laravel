@@ -17,6 +17,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $discount
  * @property double $old_price
  * @property double $actual_price
+ * @method static create(array $all)
+ * @method static where(array $array)
+ * @method static firstWhere(array $array)
  */
 
 class ProductsPosition extends Model

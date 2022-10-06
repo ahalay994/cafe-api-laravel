@@ -37,11 +37,12 @@ class TagController extends Controller
      * @return TagResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function show(int $id): NotFoundHttpException|TagResponseData
+    public function show(int $id): TagResponseData|NotFoundHttpException
     {
         try {
             $tag = Tag::findOrFail($id);
-            return new TagResponseData(['tag' => $tag, 'message' => 'Метка #' . $id . ' успешно получена']);
+
+            return new TagResponseData(['tag' => $tag, 'message' => __('controller.tag.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -56,7 +57,7 @@ class TagController extends Controller
     {
         $tag = Tag::create($request->all());
 
-        return new TagResponseData(['tag' => $tag, 'message' => 'Метка успешно создана']);
+        return new TagResponseData(['tag' => $tag, 'message' => __('controller.tag.create')]);
     }
 
     /**
@@ -65,7 +66,7 @@ class TagController extends Controller
      * @return TagResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function update(Request $request, int $id): NotFoundHttpException|TagResponseData
+    public function update(Request $request, int $id): TagResponseData|NotFoundHttpException
     {
         try {
             $tag = Tag::findOrFail($id);
@@ -73,7 +74,7 @@ class TagController extends Controller
             $tag->slug = $request->slug ?? $tag->slug;
             $tag->save();
 
-            return new TagResponseData(['tag' => $tag, 'message' => 'Метка успешно обновлена']);
+            return new TagResponseData(['tag' => $tag, 'message' => __('controller.tag.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -83,12 +84,12 @@ class TagController extends Controller
      * @param int $id
      * @return JsonResponse|NotFoundHttpException
      */
-    public function delete(int $id): NotFoundHttpException|JsonResponse
+    public function delete(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Tag::findOrFail($id)->delete();
+            Tag::destroy($id);
 
-            return $this->responseSuccess('Метка успешно удалена');
+            return $this->responseSuccess(__('controller.tag.delete', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -96,14 +97,14 @@ class TagController extends Controller
 
     /**
      * @param int $id
-     * @return NotFoundHttpException|JsonResponse
+     * @return JsonResponse|NotFoundHttpException
      */
-    public function restore(int $id): NotFoundHttpException|JsonResponse
+    public function restore(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Tag::withTrashed()->findOrFail($id)->restore();
+            Tag::onlyTrashed()->findOrFail($id)->restore();
 
-            return $this->responseSuccess('Метка успешно восстановлена');
+            return $this->responseSuccess(__('controller.tag.restore', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }

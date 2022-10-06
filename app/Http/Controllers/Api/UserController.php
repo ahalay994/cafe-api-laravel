@@ -22,18 +22,13 @@ class UserController extends Controller
 {
     use ResponseTrait;
 
-    const USER_RELATIONS = [
-        'roles.accesses',
-        'contacts',
-    ];
-
     /**
      * @return ResponsePaginationData
      * @throws UnknownProperties
      */
     public function store(): ResponsePaginationData
     {
-        $users = User::with(self::USER_RELATIONS)->paginate();
+        $users = User::paginate();
 
         return new ResponsePaginationData([
             'paginator' => $users,
@@ -46,11 +41,12 @@ class UserController extends Controller
      * @return UserResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function show(int $id): NotFoundHttpException|UserResponseData
+    public function show(int $id): UserResponseData|NotFoundHttpException
     {
         try {
-            $user = User::with(self::USER_RELATIONS)->findOrFail($id);
-            return new UserResponseData(['user' => $user, 'message' => 'Пользователь #' . $id . ' успешно получен']);
+            $user = User::findOrFail($id);
+
+            return new UserResponseData(['user' => $user, 'message' => __('controller.user.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -68,8 +64,8 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $user = User::with(self::USER_RELATIONS)->find($user->id);
-        return new UserResponseData(['user' => $user, 'message' => 'Пользователь успешно создан']);
+        $user = User::find($user->id);
+        return new UserResponseData(['user' => $user, 'message' => __('controller.user.create')]);
     }
 
     /**
@@ -81,13 +77,13 @@ class UserController extends Controller
     public function update(UserRequest $request, int $id): NotFoundHttpException|UserResponseData
     {
         try {
-            $user = User::with(self::USER_RELATIONS)->findOrFail($id);
+            $user = User::findOrFail($id);
             $user->email = $request->email ?? $user->email;
             $user->blocked = $request->blocked ?? $user->blocked;
             $user->password = isset($request->password) ? Hash::make($request->password) : $user->password;
             $user->save();
 
-            return new UserResponseData(['user' => $user, 'message' => 'Пользователь успешно обновлён']);
+            return new UserResponseData(['user' => $user, 'message' => __('controller.user.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -102,7 +98,7 @@ class UserController extends Controller
         try {
             User::destroy($id);
 
-            return $this->responseSuccess('Пользователь успешно удалён');
+            return $this->responseSuccess(__('controller.user.delete', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -115,9 +111,9 @@ class UserController extends Controller
     public function restore(int $id): NotFoundHttpException|JsonResponse
     {
         try {
-            User::withTrashed()->findOrFail($id)->restore();
+            User::onlyTrashed()->findOrFail($id)->restore();
 
-            return $this->responseSuccess('Пользователь успешно восстановлен');
+            return $this->responseSuccess(__('controller.user.restore', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -132,12 +128,12 @@ class UserController extends Controller
         $user = User::find($request->user_id);
         $role = Role::find($request->role_id);
 
-        $usersRole = UsersRole::where(['user_id' => $request->user_id, 'role_id' => $request->role_id])->first();
+        $usersRole = UsersRole::firstWhere(['user_id' => $request->user_id, 'role_id' => $request->role_id]);
         if (is_null($usersRole)) {
             UsersRole::create($request->all());
-            return $this->responseSuccess('Пользователю "' . $user->email . '" присвоена роль "' . $role->name . '"');
+            return $this->responseSuccess(__('controller.user.addRoleSuccess', ['userEmail' => $user->email, 'roleName' => $role->name]));
         } else {
-            return $this->responseError('Пользователю "' . $user->email . '" уже присвоена роль "' . $role->name . '"');
+            return $this->responseError(__('controller.user.addRoleError', ['userEmail' => $user->email, 'roleName' => $role->name]));
         }
     }
 
@@ -151,6 +147,6 @@ class UserController extends Controller
         $user = User::find($request->user_id);
         $role = Role::find($request->role_id);
 
-        return $this->responseSuccess('У пользователя "' . $user->email . '" удалена роль "' . $role->name . '"');
+        return $this->responseSuccess(__('controller.user.removeRole', ['userEmail' => $user->email, 'roleName' => $role->name]));
     }
 }

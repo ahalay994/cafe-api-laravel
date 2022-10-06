@@ -35,6 +35,10 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Category whereOrder($value)
  * @method static \Illuminate\Database\Query\Builder|Category withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Category withoutTrashed()
+ * @method static create(array $all)
+ * @method static find($id)
+ * @method static findOrFail(int $id)
+ * @method static where(null[] $array)
  */
 
 class Category extends Model
@@ -58,6 +62,11 @@ class Category extends Model
     protected $relations = [
         'parent',
         'children',
+    ];
+
+    protected $with = [
+        'products',
+        'children.products',
     ];
 
     /**

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\Language
@@ -19,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Language extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'key',
@@ -30,5 +31,6 @@ class Language extends Model
     protected $dates = [
         'created_at',
         'updated_at',
+        'deleted_at',
     ];
 }

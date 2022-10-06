@@ -12,6 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property string $name
  * @property string $image
+ * @method static paginate()
+ * @method static findOrFail(int $id)
+ * @method static create(array $all)
+ * @method static find($id)
  */
 class Partner extends Model
 {

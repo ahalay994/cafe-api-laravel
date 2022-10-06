@@ -4,18 +4,18 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * App\Http\Requests\AdditionRequest
+ *
+ * @property int $name
+ * @property string $slug
+ * @property string $description
+ * @property string $image
+ * @property double $price
+ * @property int $discount
+ */
 class AdditionRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *

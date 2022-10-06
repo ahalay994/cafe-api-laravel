@@ -10,7 +10,6 @@ use App\Http\Requests\AddressesContactRequest;
 use App\Models\AddressesContact;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -37,11 +36,12 @@ class AddressesContactController extends Controller
      * @return AddressesContactResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function show(int $id): NotFoundHttpException|AddressesContactResponseData
+    public function show(int $id): AddressesContactResponseData|NotFoundHttpException
     {
         try {
             $addressesContact = AddressesContact::findOrFail($id);
-            return new AddressesContactResponseData(['addressesContact' => $addressesContact, 'message' => 'Контактные данные адреса #' . $id . ' успешно получены']);
+
+            return new AddressesContactResponseData(['addressesContact' => $addressesContact, 'message' => __('controller.addressesContact.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -55,9 +55,8 @@ class AddressesContactController extends Controller
     public function create(AddressesContactRequest $request): AddressesContactResponseData
     {
         $addressesContact = AddressesContact::create($request->all());
-        $addressesContact = AddressesContact::find($addressesContact->id);
 
-        return new AddressesContactResponseData(['addressesContact' => $addressesContact, 'message' => 'Контактные данные адреса успешно созданы']);
+        return new AddressesContactResponseData(['addressesContact' => $addressesContact, 'message' => __('controller.addressesContact.create')]);
     }
 
     /**
@@ -66,16 +65,17 @@ class AddressesContactController extends Controller
      * @return AddressesContactResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function update(AddressesContactRequest $request, int $id): NotFoundHttpException|AddressesContactResponseData
+    public function update(AddressesContactRequest $request, int $id): AddressesContactResponseData|NotFoundHttpException
     {
         try {
             $addressesContact = AddressesContact::findOrFail($id);
             $addressesContact->address_id = $request->address_id ?? $addressesContact->address_id;
             $addressesContact->type = $request->type ?? $addressesContact->type;
             $addressesContact->value = $request->value ?? $addressesContact->value;
+            $addressesContact->description = $request->description ?? $addressesContact->description;
             $addressesContact->save();
 
-            return new AddressesContactResponseData(['addressesContact' => $addressesContact, 'message' => 'Контактные данные адреса успешно обновлены']);
+            return new AddressesContactResponseData(['addressesContact' => $addressesContact, 'message' => __('controller.addressesContact.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -85,12 +85,12 @@ class AddressesContactController extends Controller
      * @param int $id
      * @return JsonResponse|NotFoundHttpException
      */
-    public function delete(int $id): NotFoundHttpException|JsonResponse
+    public function delete(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            AddressesContact::findOrFail($id)->delete();
+            AddressesContact::destroy($id);
 
-            return $this->responseSuccess('Контактные данные адреса успешно удалены');
+            return $this->responseSuccess(__('controller.addressesContact.delete', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -98,14 +98,14 @@ class AddressesContactController extends Controller
 
     /**
      * @param int $id
-     * @return NotFoundHttpException|JsonResponse
+     * @return JsonResponse|NotFoundHttpException
      */
-    public function restore(int $id): NotFoundHttpException|JsonResponse
+    public function restore(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            AddressesContact::withTrashed()->findOrFail($id)->restore();
+            AddressesContact::onlyTrashed()->findOrFail($id)->restore();
 
-            return $this->responseSuccess('Контактные данные адреса успешно восстановлены');
+            return $this->responseSuccess(__('controller.addressesContact.restore', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }

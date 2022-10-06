@@ -4,18 +4,19 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * App\Http\Requests\ProductRequest
+ *
+ * @property string $name
+ * @property string $slug
+ * @property string $short_description
+ * @property string $description
+ * @property string $image
+ * @property bool $hidden
+ * @property int $category_id
+ */
 class ProductRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *

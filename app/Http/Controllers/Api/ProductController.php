@@ -33,7 +33,7 @@ class ProductController extends Controller
      */
     public function store(): ResponsePaginationData
     {
-        $products = Product::with(['category', 'additions', 'positions'])->paginate();
+        $products = Product::paginate();
 
         return new ResponsePaginationData([
             'paginator' => $products,
@@ -46,11 +46,12 @@ class ProductController extends Controller
      * @return ProductResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function show(int $id): NotFoundHttpException|ProductResponseData
+    public function show(int $id): ProductResponseData|NotFoundHttpException
     {
         try {
-            $product = Product::with(['positions'])->findOrFail($id);
-            return new ProductResponseData(['product' => $product, 'message' => 'Продукция #' . $id . ' успешно получена']);
+            $product = Product::findOrFail($id);
+
+            return new ProductResponseData(['product' => $product, 'message' => __('controller.product.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -65,24 +66,29 @@ class ProductController extends Controller
     {
         $product = Product::create($request->all());
 
-        return new ProductResponseData(['product' => $product, 'message' => 'Продукция успешно создана']);
+        return new ProductResponseData(['product' => $product, 'message' => __('controller.product.create')]);
     }
 
     /**
-     * @param Request $request
+     * @param ProductRequest $request
      * @param int $id
      * @return ProductResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function update(Request $request, int $id): NotFoundHttpException|ProductResponseData
+    public function update(ProductRequest $request, int $id): ProductResponseData|NotFoundHttpException
     {
         try {
             $product = Product::findOrFail($id);
             $product->name = $request->name ?? $product->name;
             $product->slug = $request->slug ?? $product->slug;
+            $product->short_description = $request->short_description ?? $product->short_description;
+            $product->description = $request->description ?? $product->description;
+            $product->image = $request->image ?? $product->image;
+            $product->hidden = $request->hidden ?? $product->hidden;
+            $product->category_id = $request->category_id ?? $product->category_id;
             $product->save();
 
-            return new ProductResponseData(['product' => $product, 'message' => 'Продукция успешно обновлена']);
+            return new ProductResponseData(['product' => $product, 'message' => __('controller.product.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -92,12 +98,12 @@ class ProductController extends Controller
      * @param int $id
      * @return JsonResponse|NotFoundHttpException
      */
-    public function delete(int $id): NotFoundHttpException|JsonResponse
+    public function delete(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Product::findOrFail($id)->delete();
+            Product::destroy($id);
 
-            return $this->responseSuccess('Продукция успешно удалена');
+            return $this->responseSuccess(__('controller.product.delete', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -105,14 +111,14 @@ class ProductController extends Controller
 
     /**
      * @param int $id
-     * @return NotFoundHttpException|JsonResponse
+     * @return JsonResponse|NotFoundHttpException
      */
-    public function restore(int $id): NotFoundHttpException|JsonResponse
+    public function restore(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Product::withTrashed()->findOrFail($id)->restore();
+            Product::onlyTrashed()->findOrFail($id)->restore();
 
-            return $this->responseSuccess('Продукция успешно восстановлена');
+            return $this->responseSuccess(__('controller.product.restore', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -127,12 +133,12 @@ class ProductController extends Controller
         $product = Product::find($request->product_id);
         $addition = Addition::find($request->addition_id);
 
-        $productsAddition = ProductsAddition::where(['product_id' => $request->product_id, 'addition_id' => $request->addition_id])->first();
+        $productsAddition = ProductsAddition::firstWhere(['product_id' => $request->product_id, 'addition_id' => $request->addition_id]);
         if (is_null($productsAddition)) {
             ProductsAddition::create($request->all());
-            return $this->responseSuccess('Продукции "' . $product->name . '" присвоено дополнение "' . $addition->name . '"');
+            return $this->responseSuccess(__('controller.product.addAdditionSuccess', ['productName' => $product->name, 'additionName' => $addition->name]));
         } else {
-            return $this->responseError('Продукции "' . $product->name . '" уже присвоено дополнение "' . $addition->name . '"');
+            return $this->responseError(__('controller.product.addAdditionError', ['productName' => $product->name, 'additionName' => $addition->name]));
         }
     }
 
@@ -146,7 +152,7 @@ class ProductController extends Controller
         $product = Product::find($request->product_id);
         $addition = Addition::find($request->addition_id);
 
-        return $this->responseSuccess('У продукции "' . $product->name . '" удалено дополнение "' . $addition->name . '"');
+        return $this->responseSuccess(__('controller.product.removeAddition', ['productName' => $product->name, 'additionName' => $addition->name]));
     }
 
     /**
@@ -158,12 +164,12 @@ class ProductController extends Controller
         $product = Product::find($request->product_id);
         $position = Position::find($request->position_id);
 
-        $productsPosition = ProductsPosition::where(['product_id' => $request->product_id, 'position_id' => $request->position_id])->first();
+        $productsPosition = ProductsPosition::firstWhere(['product_id' => $request->product_id, 'position_id' => $request->position_id]);
         if (is_null($productsPosition)) {
             ProductsPosition::create($request->all());
-            return $this->responseSuccess('Продукции "' . $product->name . '" присвоена позиция "' . $position->name . '"');
+            return $this->responseSuccess(__('controller.product.addPositionSuccess', ['productName' => $product->name, 'positionName' => $position->name]));
         } else {
-            return $this->responseError('Продукции "' . $product->name . '" уже присвоена позиция "' . $position->name . '"');
+            return $this->responseError(__('controller.product.addPositionError', ['productName' => $product->name, 'positionName' => $position->name]));
         }
     }
 
@@ -177,7 +183,7 @@ class ProductController extends Controller
         $product = Product::find($request->product_id);
         $position = Position::find($request->position_id);
 
-        return $this->responseSuccess('У продукции "' . $product->name . '" удалена позиция "' . $position->name . '"');
+        return $this->responseSuccess(__('controller.product.removePosition', ['productName' => $product->name, 'positionName' => $position->name]));
     }
 
     /**
@@ -189,12 +195,12 @@ class ProductController extends Controller
         $product = Product::find($request->product_id);
         $tag = Tag::find($request->tag_id);
 
-        $productsTag = ProductsTag::where(['product_id' => $request->product_id, 'tag_id' => $request->tag_id])->first();
+        $productsTag = ProductsTag::firstWhere(['product_id' => $request->product_id, 'tag_id' => $request->tag_id]);
         if (is_null($productsTag)) {
             ProductsTag::create($request->all());
-            return $this->responseSuccess('Продукции "' . $product->name . '" присвоена метка "' . $tag->name . '"');
+            return $this->responseSuccess(__('controller.product.addTagSuccess', ['productName' => $product->name, 'tagName' => $tag->name]));
         } else {
-            return $this->responseError('Продукции "' . $product->name . '" уже присвоена метка "' . $tag->name . '"');
+            return $this->responseError(__('controller.product.addTagError', ['productName' => $product->name, 'tagName' => $tag->name]));
         }
     }
 
@@ -208,6 +214,6 @@ class ProductController extends Controller
         $product = Product::find($request->product_id);
         $tag = Tag::find($request->tag_id);
 
-        return $this->responseSuccess('У продукции "' . $product->name . '" удалена метка "' . $tag->name . '"');
+        return $this->responseSuccess(__('controller.product.removeTag', ['productName' => $product->name, 'tagName' => $tag->name]));
     }
 }

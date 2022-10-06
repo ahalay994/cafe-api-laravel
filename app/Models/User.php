@@ -32,27 +32,18 @@ namespace App\Models;
  * @property Carbon|null $deleted_at
  * @property-read UsersContact|null $contacts
  * @property-read Role[]|null $roles
- * @property-read DatabaseNotificationCollection|DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection|PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
- * @method static UserFactory factory(...$parameters)
- * @method static Builder|User newModelQuery()
- * @method static Builder|User newQuery()
- * @method static \Illuminate\Database\Query\Builder|User onlyTrashed()
- * @method static Builder|User query()
  * @method static Builder|User whereBlocked($value)
- * @method static Builder|User whereCreatedAt($value)
- * @method static Builder|User whereDeletedAt($value)
  * @method static Builder|User whereEmail($value)
  * @method static Builder|User whereEmailVerifiedAt($value)
  * @method static Builder|User whereId($value)
- * @method static Builder|User wherePassword($value)
- * @method static Builder|User whereRememberToken($value)
- * @method static Builder|User whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|User withTrashed()
- * @method static \Illuminate\Database\Query\Builder|User withoutTrashed()
- */
+  * @method static create(array $array)
+  * @method static find($id)
+  * @method static paginate()
+  * @method static findOrFail(int $id)
+  */
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
@@ -88,7 +79,7 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     protected $relations = [
-        'roles',
+        'roles.accesses',
         'contacts',
     ];
 

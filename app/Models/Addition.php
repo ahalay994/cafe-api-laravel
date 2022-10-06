@@ -20,6 +20,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property double $old_price;
  * @property double $actual_price;
  * @property-read Product[] $products
+ * @method static findOrFail(int $id)
+ * @method static create(array $all)
+ * @method static find(int $addition_id)
  */
 class Addition extends Model
 {

@@ -14,6 +14,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $slug
  * @property string $color
  * @property string $icon
+ * @method static find(int $tag_id)
+ * @method static paginate()
+ * @method static findOrFail(int $id)
+ * @method static create(array $all)
  */
 
 class Tag extends Model

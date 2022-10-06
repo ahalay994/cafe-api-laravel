@@ -10,14 +10,13 @@ use App\Http\Requests\AdditionRequest;
 use App\Models\Addition;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AdditionController extends Controller
 {
     use ResponseTrait;
-    
+
     /**
      * @return ResponsePaginationData
      * @throws UnknownProperties
@@ -37,11 +36,12 @@ class AdditionController extends Controller
      * @return AdditionResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function show(int $id): NotFoundHttpException|AdditionResponseData
+    public function show(int $id): AdditionResponseData|NotFoundHttpException
     {
         try {
             $additions = Addition::findOrFail($id);
-            return new AdditionResponseData(['additions' => $additions, 'message' => 'Дополнение #' . $id . ' успешно получен']);
+
+            return new AdditionResponseData(['additions' => $additions, 'message' => __('controller.addition.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -56,16 +56,16 @@ class AdditionController extends Controller
     {
         $addition = Addition::create($request->all());
 
-        return new AdditionResponseData(['addition' => $addition, 'message' => 'Дополнение успешно создано']);
+        return new AdditionResponseData(['addition' => $addition, 'message' => __('controller.addition.create')]);
     }
 
     /**
-     * @param Request $request
+     * @param AdditionRequest $request
      * @param int $id
      * @return AdditionResponseData|NotFoundHttpException
      * @throws UnknownProperties
      */
-    public function update(Request $request, int $id): NotFoundHttpException|AdditionResponseData
+    public function update(AdditionRequest $request, int $id): AdditionResponseData|NotFoundHttpException
     {
         try {
             $addition = Addition::findOrFail($id);
@@ -77,7 +77,7 @@ class AdditionController extends Controller
             $addition->discount = $request->discount ?? $addition->discount;
             $addition->save();
 
-            return new AdditionResponseData(['addition' => $addition, 'message' => 'Дополнение успешно обновлено']);
+            return new AdditionResponseData(['addition' => $addition, 'message' => __('controller.addition.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -87,12 +87,12 @@ class AdditionController extends Controller
      * @param int $id
      * @return JsonResponse|NotFoundHttpException
      */
-    public function delete(int $id): NotFoundHttpException|JsonResponse
+    public function delete(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Addition::findOrFail($id)->delete();
+            Addition::destroy($id);
 
-            return $this->responseSuccess('Дополнение успешно удалено');
+            return $this->responseSuccess(__('controller.addition.delete', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -100,14 +100,14 @@ class AdditionController extends Controller
 
     /**
      * @param int $id
-     * @return NotFoundHttpException|JsonResponse
+     * @return JsonResponse|NotFoundHttpException
      */
-    public function restore(int $id): NotFoundHttpException|JsonResponse
+    public function restore(int $id): JsonResponse|NotFoundHttpException
     {
         try {
-            Addition::withTrashed()->findOrFail($id)->restore();
+            Addition::onlyTrashed()->findOrFail($id)->restore();
 
-            return $this->responseSuccess('Дополнение успешно восстановлено');
+            return $this->responseSuccess(__('controller.addition.restore', ['id' => $id]));
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
