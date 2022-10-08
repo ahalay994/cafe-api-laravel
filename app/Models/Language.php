@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 /**
  * App\Models\Language
@@ -13,9 +15,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $key
  * @property string $name
  * @property bool $blocked
- * @method static paginate()
- * @method static findOrFail(int $id)
- * @method static create(array $all)
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @method static Builder|Language whereId($value)
+ * @method static Builder|Language whereKey($value)
+ * @method static Builder|Language whereName($value)
+ * @method static Builder|Language whereBlocked($value)
+ * @method static Builder|Language whereCreatedAt($value)
+ * @method static Builder|Language whereUpdatedAt($value)
+ * @method static Builder|Language whereDeletedAt($value)
  */
 
 class Language extends Model

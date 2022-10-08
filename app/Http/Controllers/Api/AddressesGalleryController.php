@@ -8,14 +8,13 @@ use App\DataTransferObjects\ResponsePaginationData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddressesGalleryRequest;
 use App\Models\AddressesGallery;
-use App\Traits\ResponseTrait;
-use Illuminate\Http\JsonResponse;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AddressesGalleryController extends Controller
 {
-    use ResponseTrait;
+    protected $model = AddressesGallery::class;
+    protected $translatePath = 'controller.addressesGallery';
 
     /**
      * @return ResponsePaginationData
@@ -23,7 +22,7 @@ class AddressesGalleryController extends Controller
      */
     public function store(): ResponsePaginationData
     {
-        $addressesGalleries = AddressesGallery::orderBy('sort', SORT_ASC)->paginate();
+        $addressesGalleries = $this->model::orderBy('sort', SORT_ASC)->paginate();
 
         return new ResponsePaginationData([
             'paginator' => $addressesGalleries,
@@ -39,9 +38,9 @@ class AddressesGalleryController extends Controller
     public function show(int $id): AddressesGalleryResponseData|NotFoundHttpException
     {
         try {
-            $addressesGallery = AddressesGallery::findOrFail($id);
+            $addressesGallery = $this->model::findOrFail($id);
 
-            return new AddressesGalleryResponseData(['addressesGallery' => $addressesGallery, 'message' => __('controller.addressesGallery.show', ['id' => $id])]);
+            return new AddressesGalleryResponseData(['addressesGallery' => $addressesGallery, 'message' => __($this->translatePath . '.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -54,10 +53,10 @@ class AddressesGalleryController extends Controller
      */
     public function create(AddressesGalleryRequest $request): AddressesGalleryResponseData
     {
-        $addressesGallery = AddressesGallery::create($request->all());
-        $addressesGallery = AddressesGallery::find($addressesGallery->id);
+        $addressesGallery = $this->model::create($request->all());
+        $addressesGallery = $this->model::find($addressesGallery->id);
 
-        return new AddressesGalleryResponseData(['addressesGallery' => $addressesGallery, 'message' => __('controller.addressesGallery.create')]);
+        return new AddressesGalleryResponseData(['addressesGallery' => $addressesGallery, 'message' => __($this->translatePath . '.create')]);
     }
 
     /**
@@ -69,43 +68,14 @@ class AddressesGalleryController extends Controller
     public function update(AddressesGalleryRequest $request, int $id): AddressesGalleryResponseData|NotFoundHttpException
     {
         try {
-            $addressesGallery = AddressesGallery::findOrFail($id);
+            /** @var AddressesGallery $addressesGallery */
+            $addressesGallery = $this->model::findOrFail($id);
             $addressesGallery->address_id = $request->address_id ?? $addressesGallery->address_id;
             $addressesGallery->image = $request->image ?? $addressesGallery->image;
             $addressesGallery->sort = $request->sort ?? $addressesGallery->sort;
             $addressesGallery->save();
 
-            return new AddressesGalleryResponseData(['addressesGallery' => $addressesGallery, 'message' => __('controller.addressesGallery.update', ['id' => $id])]);
-        } catch (NotFoundHttpException $exception) {
-            return $exception;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @return JsonResponse|NotFoundHttpException
-     */
-    public function delete(int $id): JsonResponse|NotFoundHttpException
-    {
-        try {
-            AddressesGallery::destroy($id);
-
-            return $this->responseSuccess(__('controller.addressesGallery.delete', ['id' => $id]));
-        } catch (NotFoundHttpException $exception) {
-            return $exception;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @return JsonResponse|NotFoundHttpException
-     */
-    public function restore(int $id): JsonResponse|NotFoundHttpException
-    {
-        try {
-            AddressesGallery::onlyTrashed()->findOrFail($id)->restore();
-
-            return $this->responseSuccess(__('controller.addressesGallery.restore', ['id' => $id]));
+            return new AddressesGalleryResponseData(['addressesGallery' => $addressesGallery, 'message' => __($this->translatePath . '.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }

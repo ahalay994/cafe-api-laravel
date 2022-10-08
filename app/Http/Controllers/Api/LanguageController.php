@@ -8,14 +8,13 @@ use App\DataTransferObjects\ResponsePaginationData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LanguageRequest;
 use App\Models\Language;
-use App\Traits\ResponseTrait;
-use Illuminate\Http\JsonResponse;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class LanguageController extends Controller
 {
-    use ResponseTrait;
+    protected $model = Language::class;
+    protected $translatePath = 'controller.language';
 
     /**
      * @return ResponsePaginationData
@@ -23,7 +22,7 @@ class LanguageController extends Controller
      */
     public function store(): ResponsePaginationData
     {
-        $languages = Language::paginate();
+        $languages = $this->model::paginate();
 
         return new ResponsePaginationData([
             'paginator' => $languages,
@@ -39,9 +38,9 @@ class LanguageController extends Controller
     public function show(int $id): LanguageResponseData|NotFoundHttpException
     {
         try {
-            $language = Language::findOrFail($id);
+            $language = $this->model::findOrFail($id);
 
-            return new LanguageResponseData(['language' => $language, 'message' => __('controller.language.show', ['id' => $id])]);
+            return new LanguageResponseData(['language' => $language, 'message' => __($this->translatePath . '.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -54,9 +53,9 @@ class LanguageController extends Controller
      */
     public function create(LanguageRequest $request): LanguageResponseData
     {
-        $language = Language::create($request->all());
+        $language = $this->model::create($request->all());
 
-        return new LanguageResponseData(['language' => $language, 'message' => __('controller.language.create')]);
+        return new LanguageResponseData(['language' => $language, 'message' => __($this->translatePath . '.create')]);
     }
 
     /**
@@ -68,43 +67,14 @@ class LanguageController extends Controller
     public function update(LanguageRequest $request, int $id): LanguageResponseData|NotFoundHttpException
     {
         try {
-            $language = Language::findOrFail($id);
+            /** @var Language $language */
+            $language = $this->model::findOrFail($id);
             $language->key = $request->key ?? $language->key;
             $language->name = $request->name ?? $language->name;
             $language->blocked = $request->blocked ?? $language->blocked;
             $language->save();
 
-            return new LanguageResponseData(['language' => $language, 'message' => __('controller.language.update', ['id' => $id])]);
-        } catch (NotFoundHttpException $exception) {
-            return $exception;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @return JsonResponse|NotFoundHttpException
-     */
-    public function delete(int $id): JsonResponse|NotFoundHttpException
-    {
-        try {
-            Language::destroy($id);
-
-            return $this->responseSuccess(__('controller.language.delete', ['id' => $id]));
-        } catch (NotFoundHttpException $exception) {
-            return $exception;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @return JsonResponse|NotFoundHttpException
-     */
-    public function restore(int $id): JsonResponse|NotFoundHttpException
-    {
-        try {
-            Language::onlyTrashed()->findOrFail($id)->restore();
-
-            return $this->responseSuccess(__('controller.language.restore', ['id' => $id]));
+            return new LanguageResponseData(['language' => $language, 'message' => __($this->translatePath . '.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }

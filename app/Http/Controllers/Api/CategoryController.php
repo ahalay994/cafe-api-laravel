@@ -8,14 +8,13 @@ use App\DataTransferObjects\ResponsePaginationData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
-use App\Traits\ResponseTrait;
-use Illuminate\Http\JsonResponse;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CategoryController extends Controller
 {
-    use ResponseTrait;
+    protected $model = Category::class;
+    protected $translatePath = 'controller.category';
 
     /**
      * @return ResponsePaginationData
@@ -23,7 +22,7 @@ class CategoryController extends Controller
      */
     public function store(): ResponsePaginationData
     {
-        $categories = Category::where(['parent_id' => null])->paginate();
+        $categories = $this->model::where(['parent_id' => null])->paginate();
 
         return new ResponsePaginationData([
             'paginator' => $categories,
@@ -39,9 +38,9 @@ class CategoryController extends Controller
     public function show(int $id): CategoryResponseData|NotFoundHttpException
     {
         try {
-            $category = Category::findOrFail($id);
+            $category = $this->model::findOrFail($id);
 
-            return new CategoryResponseData(['category' => $category, 'message' => __('controller.category.show', ['id' => $id])]);
+            return new CategoryResponseData(['category' => $category, 'message' => __($this->translatePath . '.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -54,10 +53,10 @@ class CategoryController extends Controller
      */
     public function create(CategoryRequest $request): CategoryResponseData
     {
-        $category = Category::create($request->all());
-        $category = Category::find($category->id);
+        $category = $this->model::create($request->all());
+        $category = $this->model::find($category->id);
 
-        return new CategoryResponseData(['category' => $category, 'message' => __('controller.category.create')]);
+        return new CategoryResponseData(['category' => $category, 'message' => __($this->translatePath . '.create')]);
     }
 
     /**
@@ -69,7 +68,8 @@ class CategoryController extends Controller
     public function update(CategoryRequest $request, int $id): CategoryResponseData|NotFoundHttpException
     {
         try {
-            $category = Category::findOrFail($id);
+            /** @var Category $category */
+            $category = $this->model::findOrFail($id);
             $category->name = $request->name ?? $category->name;
             $category->slug = $request->slug ?? $category->slug;
             $category->description = $request->description ?? $category->description;
@@ -77,37 +77,7 @@ class CategoryController extends Controller
             $category->order = $request->order ?? $category->order;
             $category->save();
 
-            return new CategoryResponseData(['category' => $category, 'message' => __('controller.category.update', ['id' => $id])]);
-        } catch (NotFoundHttpException $exception) {
-            return $exception;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @return JsonResponse|NotFoundHttpException
-     */
-    public function delete(int $id): JsonResponse|NotFoundHttpException
-    {
-        try {
-            Category::destroy($id);
-
-            return $this->responseSuccess(__('controller.category.delete', ['id' => $id]));
-        } catch (NotFoundHttpException $exception) {
-            return $exception;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @return JsonResponse|NotFoundHttpException
-     */
-    public function restore(int $id): JsonResponse|NotFoundHttpException
-    {
-        try {
-            Category::onlyTrashed()->findOrFail($id)->restore();
-
-            return $this->responseSuccess(__('controller.category.restore', ['id' => $id]));
+            return new CategoryResponseData(['category' => $category, 'message' => __($this->translatePath . '.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }

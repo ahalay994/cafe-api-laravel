@@ -2,23 +2,23 @@
 
 namespace App\Models;
 
- use Database\Factories\UserFactory;
- use Illuminate\Contracts\Auth\MustVerifyEmail;
- use Illuminate\Database\Eloquent\Builder;
- use Illuminate\Database\Eloquent\Collection;
- use Illuminate\Database\Eloquent\Factories\HasFactory;
- use Illuminate\Database\Eloquent\Relations\BelongsToMany;
- use Illuminate\Database\Eloquent\Relations\HasOne;
- use Illuminate\Database\Eloquent\SoftDeletes;
- use Illuminate\Foundation\Auth\User as Authenticatable;
- use Illuminate\Notifications\DatabaseNotification;
- use Illuminate\Notifications\DatabaseNotificationCollection;
- use Illuminate\Notifications\Notifiable;
- use Illuminate\Support\Carbon;
- use Laravel\Sanctum\HasApiTokens;
- use Laravel\Sanctum\PersonalAccessToken;
+use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\DatabaseNotificationCollection;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
+use Laravel\Sanctum\HasApiTokens;
+use Laravel\Sanctum\PersonalAccessToken;
 
- /**
+/**
  * App\Models\User
  *
  * @property int $id
@@ -35,15 +35,14 @@ namespace App\Models;
  * @property-read int|null $notifications_count
  * @property-read Collection|PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
- * @method static Builder|User whereBlocked($value)
+ * @method static Builder|User whereId($value)
  * @method static Builder|User whereEmail($value)
  * @method static Builder|User whereEmailVerifiedAt($value)
- * @method static Builder|User whereId($value)
-  * @method static create(array $array)
-  * @method static find($id)
-  * @method static paginate()
-  * @method static findOrFail(int $id)
-  */
+ * @method static Builder|User whereBlocked($value)
+ * @method static Builder|User whereCreatedAt($value)
+ * @method static Builder|User whereUpdatedAt($value)
+ * @method static Builder|User whereDeletedAt($value)
+ */
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;

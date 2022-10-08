@@ -18,7 +18,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $name
  * @property string $slug
- * @property string $description
+ * @property string|null $description
  * @property int $parent_id
  * @property int $order
  * @property Carbon|null $created_at
@@ -33,12 +33,9 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Category whereDescription($value)
  * @method static Builder|Category whereParentId($value)
  * @method static Builder|Category whereOrder($value)
- * @method static \Illuminate\Database\Query\Builder|Category withTrashed()
- * @method static \Illuminate\Database\Query\Builder|Category withoutTrashed()
- * @method static create(array $all)
- * @method static find($id)
- * @method static findOrFail(int $id)
- * @method static where(null[] $array)
+ * @method static Builder|Category whereCreatedAt($value)
+ * @method static Builder|Category whereUpdatedAt($value)
+ * @method static Builder|Category whereDeletedAt($value)
  */
 
 class Category extends Model

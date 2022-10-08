@@ -15,15 +15,17 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $name
  * @property string $slug
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
  * @property User[]|null $users
  * @property Access[]|null $accesses
  * @method static Builder|Role whereId($value)
  * @method static Builder|Role whereName($value)
  * @method static Builder|Role whereSlug($value)
- * @method static paginate()
- * @method static create(array $all)
- * @method static find(int $role_id)
- * @method static findOrFail(int $id)
+ * @method static Builder|Role whereCreatedAt($value)
+ * @method static Builder|Role whereUpdatedAt($value)
+ * @method static Builder|Role whereDeletedAt($value)
  */
 class Role extends Model
 {
@@ -47,6 +49,7 @@ class Role extends Model
     {
         $accesses = [];
         foreach ($roles as $role) {
+            /** @var Role $role */
             $role = Role::whereSlug($role)->first();
             $accesses = array_merge($accesses, $role->accesses->pluck('name')->toArray());
         }
@@ -58,7 +61,7 @@ class Role extends Model
      */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, UsersRole::getTable());
+        return $this->belongsToMany(User::class, UsersRole::class);
     }
 
     /**

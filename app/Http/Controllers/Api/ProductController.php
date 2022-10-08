@@ -17,15 +17,14 @@ use App\Models\ProductsAddition;
 use App\Models\ProductsPosition;
 use App\Models\ProductsTag;
 use App\Models\Tag;
-use App\Traits\ResponseTrait;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProductController extends Controller
 {
-    use ResponseTrait;
+    protected $model = Product::class;
+    protected $translatePath = 'controller.product';
 
     /**
      * @return ResponsePaginationData
@@ -33,7 +32,7 @@ class ProductController extends Controller
      */
     public function store(): ResponsePaginationData
     {
-        $products = Product::paginate();
+        $products = $this->model::paginate();
 
         return new ResponsePaginationData([
             'paginator' => $products,
@@ -49,9 +48,9 @@ class ProductController extends Controller
     public function show(int $id): ProductResponseData|NotFoundHttpException
     {
         try {
-            $product = Product::findOrFail($id);
+            $product = $this->model::findOrFail($id);
 
-            return new ProductResponseData(['product' => $product, 'message' => __('controller.product.show', ['id' => $id])]);
+            return new ProductResponseData(['product' => $product, 'message' => __($this->translatePath . '.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -64,9 +63,9 @@ class ProductController extends Controller
      */
     public function create(ProductRequest $request): ProductResponseData
     {
-        $product = Product::create($request->all());
+        $product = $this->model::create($request->all());
 
-        return new ProductResponseData(['product' => $product, 'message' => __('controller.product.create')]);
+        return new ProductResponseData(['product' => $product, 'message' => __($this->translatePath . '.create')]);
     }
 
     /**
@@ -78,7 +77,8 @@ class ProductController extends Controller
     public function update(ProductRequest $request, int $id): ProductResponseData|NotFoundHttpException
     {
         try {
-            $product = Product::findOrFail($id);
+            /** @var Product $product */
+            $product = $this->model::findOrFail($id);
             $product->name = $request->name ?? $product->name;
             $product->slug = $request->slug ?? $product->slug;
             $product->short_description = $request->short_description ?? $product->short_description;
@@ -88,37 +88,7 @@ class ProductController extends Controller
             $product->category_id = $request->category_id ?? $product->category_id;
             $product->save();
 
-            return new ProductResponseData(['product' => $product, 'message' => __('controller.product.update', ['id' => $id])]);
-        } catch (NotFoundHttpException $exception) {
-            return $exception;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @return JsonResponse|NotFoundHttpException
-     */
-    public function delete(int $id): JsonResponse|NotFoundHttpException
-    {
-        try {
-            Product::destroy($id);
-
-            return $this->responseSuccess(__('controller.product.delete', ['id' => $id]));
-        } catch (NotFoundHttpException $exception) {
-            return $exception;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @return JsonResponse|NotFoundHttpException
-     */
-    public function restore(int $id): JsonResponse|NotFoundHttpException
-    {
-        try {
-            Product::onlyTrashed()->findOrFail($id)->restore();
-
-            return $this->responseSuccess(__('controller.product.restore', ['id' => $id]));
+            return new ProductResponseData(['product' => $product, 'message' => __($this->translatePath . '.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -130,15 +100,17 @@ class ProductController extends Controller
      */
     public function addAddition(ProductsAdditionRequest $request): JsonResponse
     {
-        $product = Product::find($request->product_id);
+        /** @var Product $product */
+        $product = $this->model::find($request->product_id);
+        /** @var Addition $addition */
         $addition = Addition::find($request->addition_id);
 
         $productsAddition = ProductsAddition::firstWhere(['product_id' => $request->product_id, 'addition_id' => $request->addition_id]);
         if (is_null($productsAddition)) {
             ProductsAddition::create($request->all());
-            return $this->responseSuccess(__('controller.product.addAdditionSuccess', ['productName' => $product->name, 'additionName' => $addition->name]));
+            return $this->responseSuccess(__($this->translatePath . '.addAdditionSuccess', ['productName' => $product->name, 'additionName' => $addition->name]));
         } else {
-            return $this->responseError(__('controller.product.addAdditionError', ['productName' => $product->name, 'additionName' => $addition->name]));
+            return $this->responseError(__($this->translatePath . '.addAdditionError', ['productName' => $product->name, 'additionName' => $addition->name]));
         }
     }
 
@@ -149,10 +121,12 @@ class ProductController extends Controller
     public function removeAddition(ProductsAdditionRequest $request): JsonResponse
     {
         ProductsAddition::where(['product_id' => $request->product_id, 'addition_id' => $request->addition_id])->delete();
-        $product = Product::find($request->product_id);
+        /** @var Product $product */
+        $product = $this->model::find($request->product_id);
+        /** @var Addition $addition */
         $addition = Addition::find($request->addition_id);
 
-        return $this->responseSuccess(__('controller.product.removeAddition', ['productName' => $product->name, 'additionName' => $addition->name]));
+        return $this->responseSuccess(__($this->translatePath . '.removeAddition', ['productName' => $product->name, 'additionName' => $addition->name]));
     }
 
     /**
@@ -161,15 +135,17 @@ class ProductController extends Controller
      */
     public function addPosition(ProductsPositionRequest $request): JsonResponse
     {
-        $product = Product::find($request->product_id);
+        /** @var Product $product */
+        $product = $this->model::find($request->product_id);
+        /** @var Position $position */
         $position = Position::find($request->position_id);
 
         $productsPosition = ProductsPosition::firstWhere(['product_id' => $request->product_id, 'position_id' => $request->position_id]);
         if (is_null($productsPosition)) {
             ProductsPosition::create($request->all());
-            return $this->responseSuccess(__('controller.product.addPositionSuccess', ['productName' => $product->name, 'positionName' => $position->name]));
+            return $this->responseSuccess(__($this->translatePath . '.addPositionSuccess', ['productName' => $product->name, 'positionName' => $position->name]));
         } else {
-            return $this->responseError(__('controller.product.addPositionError', ['productName' => $product->name, 'positionName' => $position->name]));
+            return $this->responseError(__($this->translatePath . '.addPositionError', ['productName' => $product->name, 'positionName' => $position->name]));
         }
     }
 
@@ -180,10 +156,12 @@ class ProductController extends Controller
     public function removePosition(ProductsPositionRequest $request): JsonResponse
     {
         ProductsPosition::where(['product_id' => $request->product_id, 'position_id' => $request->position_id])->delete();
-        $product = Product::find($request->product_id);
+        /** @var Product $product */
+        $product = $this->model::find($request->product_id);
+        /** @var Position $position */
         $position = Position::find($request->position_id);
 
-        return $this->responseSuccess(__('controller.product.removePosition', ['productName' => $product->name, 'positionName' => $position->name]));
+        return $this->responseSuccess(__($this->translatePath . '.removePosition', ['productName' => $product->name, 'positionName' => $position->name]));
     }
 
     /**
@@ -192,15 +170,17 @@ class ProductController extends Controller
      */
     public function addTag(ProductsTagRequest $request): JsonResponse
     {
-        $product = Product::find($request->product_id);
+        /** @var Product $product */
+        $product = $this->model::find($request->product_id);
+        /** @var Tag $tag */
         $tag = Tag::find($request->tag_id);
 
         $productsTag = ProductsTag::firstWhere(['product_id' => $request->product_id, 'tag_id' => $request->tag_id]);
         if (is_null($productsTag)) {
             ProductsTag::create($request->all());
-            return $this->responseSuccess(__('controller.product.addTagSuccess', ['productName' => $product->name, 'tagName' => $tag->name]));
+            return $this->responseSuccess(__($this->translatePath . '.addTagSuccess', ['productName' => $product->name, 'tagName' => $tag->name]));
         } else {
-            return $this->responseError(__('controller.product.addTagError', ['productName' => $product->name, 'tagName' => $tag->name]));
+            return $this->responseError(__($this->translatePath . '.addTagError', ['productName' => $product->name, 'tagName' => $tag->name]));
         }
     }
 
@@ -211,9 +191,11 @@ class ProductController extends Controller
     public function removeTag(ProductsTagRequest $request): JsonResponse
     {
         ProductsTag::where(['product_id' => $request->product_id, 'tag_id' => $request->tag_id])->delete();
-        $product = Product::find($request->product_id);
+        /** @var Product $product */
+        $product = $this->model::find($request->product_id);
+        /** @var Tag $tag */
         $tag = Tag::find($request->tag_id);
 
-        return $this->responseSuccess(__('controller.product.removeTag', ['productName' => $product->name, 'tagName' => $tag->name]));
+        return $this->responseSuccess(__($this->translatePath . '.removeTag', ['productName' => $product->name, 'tagName' => $tag->name]));
     }
 }

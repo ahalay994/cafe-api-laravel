@@ -21,18 +21,15 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read User $user
- * @method static Builder|UsersContact newModelQuery()
- * @method static Builder|UsersContact newQuery()
- * @method static Builder|UsersContact query()
- * @method static Builder|UsersContact whereCreatedAt($value)
- * @method static Builder|UsersContact whereDateBirthday($value)
- * @method static Builder|UsersContact whereFirstName($value)
  * @method static Builder|UsersContact whereId($value)
+ * @method static Builder|UsersContact whereUserId($value)
+ * @method static Builder|UsersContact wherePhone($value)
+ * @method static Builder|UsersContact whereFirstName($value)
  * @method static Builder|UsersContact whereLastName($value)
  * @method static Builder|UsersContact wherePatronymicName($value)
- * @method static Builder|UsersContact wherePhone($value)
+ * @method static Builder|UsersContact whereDateBirthday($value)
+ * @method static Builder|UsersContact whereCreatedAt($value)
  * @method static Builder|UsersContact whereUpdatedAt($value)
- * @method static Builder|UsersContact whereUserId($value)
  */
 class UsersContact extends Model
 {

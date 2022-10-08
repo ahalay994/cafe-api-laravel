@@ -5,7 +5,6 @@ namespace App\Exceptions;
 use App\Traits\ResponseTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Support\Facades\Lang;
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
@@ -57,9 +56,9 @@ class Handler extends ExceptionHandler
                 $previousException = $e->getPrevious();
                 if ($previousException instanceof ModelNotFoundException) {
                     $model = (app())->make($previousException->getModel());
-                    return $this->responseError(Lang::get('controller.not_found.' . $model->getTable()));
+                    return $this->responseError(__('controller.not_found.' . $model->getTable()));
                 }
-                return $this->responseError('Некорректный запрос');
+                return $this->responseError(__('controller.error'));
             }
             return true;
         });

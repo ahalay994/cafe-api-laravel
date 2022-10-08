@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 /**
  * App\Models\Addition
@@ -13,16 +15,29 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id;
  * @property string $name;
  * @property string $slug;
- * @property string $description;
- * @property string $image;
+ * @property string|null $description;
+ * @property string|null $image;
  * @property double $price;
  * @property int $discount;
- * @property double $old_price;
- * @property double $actual_price;
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @property double|null $old_price;
+ * @property double|null $actual_price;
  * @property-read Product[] $products
- * @method static findOrFail(int $id)
- * @method static create(array $all)
- * @method static find(int $addition_id)
+ * @method static Builder|Addition whereId($value)
+ * @method static Builder|Addition whereName($value)
+ * @method static Builder|Addition whereSlug($value)
+ * @method static Builder|Addition whereDescription($value)
+ * @method static Builder|Addition whereImage($value)
+ * @method static Builder|Addition wherePrice($value)
+ * @method static Builder|Addition whereDiscount($value)
+ * @method static Builder|Addition whereCreatedAt($value)
+ * @method static Builder|Addition whereUpdatedAt($value)
+ * @method static Builder|Addition whereDeletedAt($value)
+ * @method static Builder|Addition whereOldPrice($value)
+ * @method static Builder|Addition whereActualPrice($value)
+ * @method static first()
  */
 class Addition extends Model
 {
@@ -43,7 +58,14 @@ class Addition extends Model
         'deleted_at',
     ];
 
-    protected $appends = ['old_price', 'actual_price'];
+    protected $appends = [
+        'old_price',
+        'actual_price'
+    ];
+
+    protected $with = [
+        'products',
+    ];
 
     /**
      * @return float

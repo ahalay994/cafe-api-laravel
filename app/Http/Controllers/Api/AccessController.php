@@ -8,14 +8,13 @@ use App\DataTransferObjects\ResponsePaginationData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AccessRequest;
 use App\Models\Access;
-use App\Traits\ResponseTrait;
-use Illuminate\Http\JsonResponse;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AccessController extends Controller
 {
-    use ResponseTrait;
+    protected $model = Access::class;
+    protected $translatePath = 'controller.access';
 
     /**
      * @return ResponsePaginationData
@@ -23,7 +22,7 @@ class AccessController extends Controller
      */
     public function store(): ResponsePaginationData
     {
-        $accesses = Access::paginate();
+        $accesses = $this->model::paginate();
 
         return new ResponsePaginationData([
             'paginator' => $accesses,
@@ -39,9 +38,9 @@ class AccessController extends Controller
     public function show(int $id): AccessResponseData|NotFoundHttpException
     {
         try {
-            $access = Access::findOrFail($id);
+            $access = $this->model::findOrFail($id);
 
-            return new AccessResponseData(['access' => $access, 'message' => __('controller.access.show', ['id' => $id])]);
+            return new AccessResponseData(['access' => $access, 'message' => __($this->translatePath . '.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -54,9 +53,9 @@ class AccessController extends Controller
      */
     public function create(AccessRequest $request): AccessResponseData
     {
-        $access = Access::create($request->all());
+        $access = $this->model::create($request->all());
 
-        return new AccessResponseData(['access' => $access, 'message' => __('controller.access.create')]);
+        return new AccessResponseData(['access' => $access, 'message' => __($this->translatePath . '.create')]);
     }
 
     /**
@@ -68,27 +67,13 @@ class AccessController extends Controller
     public function update(AccessRequest $request, int $id): AccessResponseData|NotFoundHttpException
     {
         try {
-            $access = Access::findOrFail($id);
+            /** @var Access $access */
+            $access = $this->model::findOrFail($id);
             $access->name = $request->name ?? $access->name;
-            $access->comment = $request->slug ?? $access->slug;
+            $access->comment = $request->comment ?? $access->comment;
             $access->save();
 
-            return new AccessResponseData(['access' => $access, 'message' => __('controller.access.update', ['id' => $id])]);
-        } catch (NotFoundHttpException $exception) {
-            return $exception;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @return JsonResponse|NotFoundHttpException
-     */
-    public function delete(int $id): JsonResponse|NotFoundHttpException
-    {
-        try {
-            Access::destroy($id);
-
-            return $this->responseSuccess(__('controller.access.delete'));
+            return new AccessResponseData(['access' => $access, 'message' => __($this->translatePath . '.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }

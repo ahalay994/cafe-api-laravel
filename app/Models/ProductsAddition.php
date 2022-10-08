@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,9 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $product_id
  * @property int $addition_id
- * @method static where(array $array)
- * @method static create(array $all)
- * @method static firstWhere(array $array)
+ * @method static Builder|ProductsAddition whereProductId($value)
+ * @method static Builder|ProductsAddition whereAdditionId($value)
  */
 
 class ProductsAddition extends Model

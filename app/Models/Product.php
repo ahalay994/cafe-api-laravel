@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 /**
  * App\Models\Product
@@ -14,19 +16,28 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property string $name
  * @property string $slug
- * @property string $short_description
- * @property string $description
- * @property double $price
- * @property int $discount
+ * @property string|null $short_description
+ * @property string|null $description
+ * @property string|null $image
  * @property bool $hidden
  * @property int $category_id
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
  * @property-read Category $category
  * @property-read Addition[] $additions
  * @property-read Position[] $positions
- * @method static paginate()
- * @method static findOrFail(int $id)
- * @method static create(array $all)
- * @method static find(int $product_id)
+ * @method static Builder|Product whereId($value)
+ * @method static Builder|Product whereName($value)
+ * @method static Builder|Product whereSlug($value)
+ * @method static Builder|Product whereShortDescription($value)
+ * @method static Builder|Product whereDescription($value)
+ * @method static Builder|Product whereImage($value)
+ * @method static Builder|Product whereHidden($value)
+ * @method static Builder|Product whereCategoryId($value)
+ * @method static Builder|Product whereCreatedAt($value)
+ * @method static Builder|Product whereUpdatedAt($value)
+ * @method static Builder|Product whereDeletedAt($value)
  */
 
 class Product extends Model
@@ -38,8 +49,7 @@ class Product extends Model
         'slug',
         'short_description',
         'description',
-        'price',
-        'discount',
+        'image',
         'hidden',
         'category_id',
     ];

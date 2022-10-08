@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
-use App\Traits\ResponseTrait;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
-    use ResponseTrait;
+    protected $translatePath = 'controller.auth';
 
     /**
      * @param RegisterRequest $request
@@ -49,7 +48,7 @@ class AuthController extends Controller
 
             return new AuthResponseData(['user' => $user]);
         } else {
-            return $this->responseError(__('controller.auth.error'), Response::HTTP_UNAUTHORIZED);
+            return $this->responseError(__($this->translatePath . '.error'), Response::HTTP_UNAUTHORIZED);
         }
     }
 
@@ -59,7 +58,7 @@ class AuthController extends Controller
      */
     public function userInfo(): UserResponseData
     {
-        return new UserResponseData(['user' => auth()->user(), 'message' => __('controller.auth.currentUser')]);
+        return new UserResponseData(['user' => auth()->user(), 'message' => __($this->translatePath . '.currentUser')]);
     }
 
     /**
@@ -69,6 +68,6 @@ class AuthController extends Controller
     public function verify(EmailVerificationRequest $request): JsonResponse
     {
         $request->fulfill();
-        return $this->responseSuccess(__('controller.auth.emailVerifySuccess'));
+        return $this->responseSuccess(__($this->translatePath . '.emailVerifySuccess'));
     }
 }

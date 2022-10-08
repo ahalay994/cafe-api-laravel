@@ -10,17 +10,16 @@ use Illuminate\Database\Eloquent\Builder;
 /**
  * App\Models\Access
  *
+ * @property int $id
  * @property string $name
- * @property string $comment
+ * @property string|null $comment
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @method static Builder|Access whereId($value)
  * @method static Builder|Access whereName($value)
  * @method static Builder|Access whereComment($value)
- * @method static paginate()
- * @method static findOrFail(int $id)
- * @method static create(array $all)
- * @method static find(int $access_id)
+ * @method static Builder|Access whereCreatedAt($value)
+ * @method static Builder|Access whereUpdatedAt($value)
  */
 
 class Access extends Model

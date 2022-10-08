@@ -14,10 +14,10 @@ class Localization
      * Handle an incoming request.
      *
      * @param Request $request
-     * @param Closure(Request): (Response|RedirectResponse) $next
-     * @return Response|RedirectResponse
+     * @param Closure $next
+     * @return RedirectResponse|Response|mixed
      */
-    public function handle(Request $request, Closure $next): Response|RedirectResponse
+    public function handle(Request $request, Closure $next): mixed
     {
         /**
          * requests hasHeader is used to check the Accept-Language header from the REST API's

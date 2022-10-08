@@ -8,14 +8,13 @@ use App\DataTransferObjects\ResponsePaginationData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PartnerRequest;
 use App\Models\Partner;
-use App\Traits\ResponseTrait;
-use Illuminate\Http\JsonResponse;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PartnerController extends Controller
 {
-    use ResponseTrait;
+    protected $model = Partner::class;
+    protected $translatePath = 'controller.partner';
 
     /**
      * @return ResponsePaginationData
@@ -23,7 +22,7 @@ class PartnerController extends Controller
      */
     public function store(): ResponsePaginationData
     {
-        $partners = Partner::paginate();
+        $partners = $this->model::paginate();
 
         return new ResponsePaginationData([
             'paginator' => $partners,
@@ -39,9 +38,9 @@ class PartnerController extends Controller
     public function show(int $id): NotFoundHttpException|PartnerResponseData
     {
         try {
-            $partner = Partner::findOrFail($id);
+            $partner = $this->model::findOrFail($id);
 
-            return new PartnerResponseData(['partner' => $partner, 'message' => __('controller.partner.show', ['id' => $id])]);
+            return new PartnerResponseData(['partner' => $partner, 'message' => __($this->translatePath . '.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -54,9 +53,9 @@ class PartnerController extends Controller
      */
     public function create(PartnerRequest $request): PartnerResponseData
     {
-        $partner = Partner::create($request->all());
+        $partner = $this->model::create($request->all());
 
-        return new PartnerResponseData(['partner' => $partner, 'message' => __('controller.partner.create')]);
+        return new PartnerResponseData(['partner' => $partner, 'message' => __($this->translatePath . '.create')]);
     }
 
     /**
@@ -68,42 +67,13 @@ class PartnerController extends Controller
     public function update(PartnerRequest $request, int $id): NotFoundHttpException|PartnerResponseData
     {
         try {
-            $partner = Partner::findOrFail($id);
+            /** @var Partner $partner */
+            $partner = $this->model::findOrFail($id);
             $partner->name = $request->name ?? $partner->name;
             $partner->image = $request->image ?? $partner->image;
             $partner->save();
 
-            return new PartnerResponseData(['partner' => $partner, 'message' => __('controller.partner.update', ['id' => $id])]);
-        } catch (NotFoundHttpException $exception) {
-            return $exception;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @return JsonResponse|NotFoundHttpException
-     */
-    public function delete(int $id): JsonResponse|NotFoundHttpException
-    {
-        try {
-            Partner::destroy($id);
-
-            return $this->responseSuccess(__('controller.partner.delete', ['id' => $id]));
-        } catch (NotFoundHttpException $exception) {
-            return $exception;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @return JsonResponse|NotFoundHttpException
-     */
-    public function restore(int $id): JsonResponse|NotFoundHttpException
-    {
-        try {
-            Partner::onlyTrashed()->findOrFail($id)->restore();
-
-            return $this->responseSuccess(__('controller.partner.restore', ['id' => $id]));
+            return new PartnerResponseData(['partner' => $partner, 'message' => __($this->translatePath . '.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }

@@ -8,15 +8,14 @@ use App\DataTransferObjects\Tag\TagsCollection;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TagRequest;
 use App\Models\Tag;
-use App\Traits\ResponseTrait;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TagController extends Controller
 {
-    use ResponseTrait;
+    protected $model = Tag::class;
+    protected $translatePath = 'controller.tag';
 
     /**
      * @return ResponsePaginationData
@@ -40,9 +39,9 @@ class TagController extends Controller
     public function show(int $id): TagResponseData|NotFoundHttpException
     {
         try {
-            $tag = Tag::findOrFail($id);
+            $tag = $this->model::findOrFail($id);
 
-            return new TagResponseData(['tag' => $tag, 'message' => __('controller.tag.show', ['id' => $id])]);
+            return new TagResponseData(['tag' => $tag, 'message' => __($this->translatePath . '.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -55,9 +54,9 @@ class TagController extends Controller
      */
     public function create(TagRequest $request): TagResponseData
     {
-        $tag = Tag::create($request->all());
+        $tag = $this->model::create($request->all());
 
-        return new TagResponseData(['tag' => $tag, 'message' => __('controller.tag.create')]);
+        return new TagResponseData(['tag' => $tag, 'message' => __($this->translatePath . '.create')]);
     }
 
     /**
@@ -69,42 +68,13 @@ class TagController extends Controller
     public function update(Request $request, int $id): TagResponseData|NotFoundHttpException
     {
         try {
-            $tag = Tag::findOrFail($id);
+            /** @var Tag $tag */
+            $tag = $this->model::findOrFail($id);
             $tag->name = $request->name ?? $tag->name;
             $tag->slug = $request->slug ?? $tag->slug;
             $tag->save();
 
-            return new TagResponseData(['tag' => $tag, 'message' => __('controller.tag.update', ['id' => $id])]);
-        } catch (NotFoundHttpException $exception) {
-            return $exception;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @return JsonResponse|NotFoundHttpException
-     */
-    public function delete(int $id): JsonResponse|NotFoundHttpException
-    {
-        try {
-            Tag::destroy($id);
-
-            return $this->responseSuccess(__('controller.tag.delete', ['id' => $id]));
-        } catch (NotFoundHttpException $exception) {
-            return $exception;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @return JsonResponse|NotFoundHttpException
-     */
-    public function restore(int $id): JsonResponse|NotFoundHttpException
-    {
-        try {
-            Tag::onlyTrashed()->findOrFail($id)->restore();
-
-            return $this->responseSuccess(__('controller.tag.restore', ['id' => $id]));
+            return new TagResponseData(['tag' => $tag, 'message' => __($this->translatePath . '.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }

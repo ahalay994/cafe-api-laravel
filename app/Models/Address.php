@@ -2,25 +2,34 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 /**
  * App\Models\Address
  *
  * @property int $id
  * @property string $name
- * @property string $description
+ * @property string|null $description
  * @property double $lat
  * @property double $lon
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
  * @property-read AddressesGallery[] $galleries
  * @property-read AddressesContact[] $contacts
- * @method static findOrFail(int $id)
- * @method static create(array $all)
- * @method static find($id)
- * @method static paginate()
+ * @method static Builder|Address whereId($value)
+ * @method static Builder|Address whereName($value)
+ * @method static Builder|Address whereDescription($value)
+ * @method static Builder|Address whereLat($value)
+ * @method static Builder|Address whereLon($value)
+ * @method static Builder|Address whereCreatedAt($value)
+ * @method static Builder|Address whereUpdatedAt($value)
+ * @method static Builder|Address whereDeletedAt($value)
  */
 
 class Address extends Model

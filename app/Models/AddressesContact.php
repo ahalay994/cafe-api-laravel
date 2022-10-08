@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Enum\AddressesContactTypesEnum;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 /**
  * App\Models\AddressesContact
@@ -14,10 +16,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $address_id
  * @property string $type
  * @property string $value
- * @method static paginate()
- * @method static findOrFail(int $id)
- * @method static create(array $all)
- * @method static find($id)
+ * @property string|null $description
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @method static Builder|AddressesContact whereId($value)
+ * @method static Builder|AddressesContact whereAddressId($value)
+ * @method static Builder|AddressesContact whereType($value)
+ * @method static Builder|AddressesContact whereValue($value)
+ * @method static Builder|AddressesContact whereDescription($value)
+ * @method static Builder|AddressesContact whereCreatedAt($value)
+ * @method static Builder|AddressesContact whereUpdatedAt($value)
+ * @method static Builder|AddressesContact whereDeletedAt($value)
  */
 
 class AddressesContact extends Model

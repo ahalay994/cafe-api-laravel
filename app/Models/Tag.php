@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 /**
  * App\Models\Tag
@@ -14,10 +16,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $slug
  * @property string $color
  * @property string $icon
- * @method static find(int $tag_id)
- * @method static paginate()
- * @method static findOrFail(int $id)
- * @method static create(array $all)
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @method static Builder|Tag whereId($value)
+ * @method static Builder|Tag whereName($value)
+ * @method static Builder|Tag whereSlug($value)
+ * @method static Builder|Tag whereColor($value)
+ * @method static Builder|Tag whereIcon($value)
+ * @method static Builder|Tag whereCreatedAt($value)
+ * @method static Builder|Tag whereUpdatedAt($value)
+ * @method static Builder|Tag whereDeletedAt($value)
  */
 
 class Tag extends Model

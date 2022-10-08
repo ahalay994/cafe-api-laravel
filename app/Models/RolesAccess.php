@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @method static where(array $array)
- * @method static create(array $all)
- * @method static firstWhere(array $array)
+ * @property int $role_id
+ * @property int $access_id
+ * @method static Builder|RolesAccess whereRoleId($value)
+ * @method static Builder|RolesAccess whereAccessId($value)
  */
 class RolesAccess extends Model
 {

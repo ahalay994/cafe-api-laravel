@@ -8,14 +8,14 @@ use App\DataTransferObjects\ResponsePaginationData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddressRequest;
 use App\Models\Address;
-use App\Traits\ResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AddressController extends Controller
 {
-    use ResponseTrait;
+    protected $model = Address::class;
+    protected $translatePath = 'controller.address';
 
     /**
      * @return ResponsePaginationData
@@ -23,7 +23,7 @@ class AddressController extends Controller
      */
     public function store(): ResponsePaginationData
     {
-        $addresses = Address::paginate();
+        $addresses = $this->model::paginate();
 
         return new ResponsePaginationData([
             'paginator' => $addresses,
@@ -39,9 +39,9 @@ class AddressController extends Controller
     public function show(int $id): AddressResponseData|NotFoundHttpException
     {
         try {
-            $address = Address::findOrFail($id);
+            $address = $this->model::findOrFail($id);
 
-            return new AddressResponseData(['address' => $address, 'message' => __('controller.address.show', ['id' => $id])]);
+            return new AddressResponseData(['address' => $address, 'message' => __($this->translatePath . '.show', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
@@ -54,9 +54,9 @@ class AddressController extends Controller
      */
     public function create(AddressRequest $request): AddressResponseData
     {
-        $address = Address::create($request->all());
+        $address = $this->model::create($request->all());
 
-        return new AddressResponseData(['address' => $address, 'message' => __('controller.address.create')]);
+        return new AddressResponseData(['address' => $address, 'message' => __($this->translatePath . '.create')]);
     }
 
     /**
@@ -68,44 +68,15 @@ class AddressController extends Controller
     public function update(AddressRequest $request, int $id): AddressResponseData|NotFoundHttpException
     {
         try {
-            $address = Address::findOrFail($id);
+            /** @var Address $address */
+            $address = $this->model::findOrFail($id);
             $address->name = $request->name ?? $address->name;
             $address->description = $request->description ?? $address->description;
             $address->lat = $request->lat ?? $address->lat;
             $address->lon = $request->lon ?? $address->lon;
             $address->save();
 
-            return new AddressResponseData(['address' => $address, 'message' => __('controller.address.update', ['id' => $id])]);
-        } catch (NotFoundHttpException $exception) {
-            return $exception;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @return JsonResponse|NotFoundHttpException
-     */
-    public function delete(int $id): JsonResponse|NotFoundHttpException
-    {
-        try {
-            Address::destroy($id);
-
-            return $this->responseSuccess(__('controller.address.delete', ['id' => $id]));
-        } catch (NotFoundHttpException $exception) {
-            return $exception;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @return JsonResponse|NotFoundHttpException
-     */
-    public function restore(int $id): JsonResponse|NotFoundHttpException
-    {
-        try {
-            Address::onlyTrashed()->findOrFail($id)->restore();
-
-            return $this->responseSuccess(__('controller.address.restore', ['id' => $id]));
+            return new AddressResponseData(['address' => $address, 'message' => __($this->translatePath . '.update', ['id' => $id])]);
         } catch (NotFoundHttpException $exception) {
             return $exception;
         }
